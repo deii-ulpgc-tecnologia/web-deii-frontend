@@ -1,0 +1,120 @@
+---
+---
+
+<section>
+    <article>
+        <h1>
+            Representamos y defendemos a los estudiantes de la{" "}
+            <span>Escuela de Ingeniería Informática</span>
+        </h1>
+        <div>
+            <a href="/formularios" class="primary">
+                ¿Problema o Queja?
+            </a>
+            <a href="/difusion">Canales de difusión</a>
+            <a href="/sobre-nosotros">Conoce a la delegación</a>
+        </div>
+    </article>
+    <img src="/images/foto-de-familia.jpg" alt="" />
+    <div aria-hidden class="content"></div>
+</section>
+
+<style>
+    section {
+        position: relative;
+        width: 100%;
+        height: 85dvh;
+        overflow: hidden;
+        display: grid;
+        grid-template-columns: 40% auto;
+        grid-template-rows: 100%;
+
+        article {
+            width: 100%;
+            height: 100%;
+            min-height: 0;
+            padding: 2rem;
+            color: white;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            background-color: var(--ulpgc-blue);
+            gap: 40px;
+
+            h1 {
+                font-size: 42px;
+
+                span {
+                    color: color-mix(var(--ulpgc-orange) 70%, white);
+                }
+            }
+
+            div {
+                display: flex;
+                gap: 20px;
+                justify-content: center;
+
+                a {
+                    border: 5px solid white;
+                    border-radius: 10px;
+                    padding: 10px 20px;
+                    text-decoration: none;
+                    color: white;
+                    font-weight: bold;
+                    transition: all 0.3s linear;
+
+                    &:hover {
+                        color: var(--ulpgc-blue);
+                        background: white;
+                    }
+
+                    &.primary {
+                        border-color: var(--ulpgc-orange);
+                        background: var(--ulpgc-orange);
+
+                        &:hover {
+                            background: var(--ulpgc-orange-dark);
+                            color: white;
+                            border-color: var(--ulpgc-orange-dark);
+                        }
+                    }
+                }
+            }
+        }
+
+        img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .content {
+            background: var(--ulpgc-blue-dark);
+            background: linear-gradient(
+                90deg,
+                var(--ulpgc-blue-dark) 0%,
+                var(--ulpgc-blue) 100%
+            );
+            opacity: 0.5;
+            position: absolute;
+            left: 40%;
+            top: 0;
+            width: 60%;
+            height: 100%;
+        }
+    }
+
+    @media (max-width: 1032px) {
+        section {
+            height: 90dvh;
+
+            img {
+                height: 100%;
+                width: 100%;
+                object-fit: cover;
+            }
+        }
+    }
+</style>
