@@ -1,0 +1,60 @@
+name: Lint check
+
+on:
+    push:
+        branches: [main]
+    pull_request:
+        types: [opened, synchronize, reopened]
+        branches: [main]
+
+permissions:
+    contents: write
+
+concurrency:
+    group: ${{ github.workflow }}-${{ github.ref_name }}-${{ github.event.pull_request.number || github.run_id }}
+    cancel-in-progress: true
+
+jobs:
+    lint:
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v6
+            - uses: ./.github/actions/setup-repo
+            - name: Lint
+              run: |
+                  echo "::group::Lint"
+                  npm run lint:check
+                  echo "::endgroup::"
+
+    format:
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v6
+              with:
+                  ref: ${{ github.head_ref }}
+            - uses: ./.github/actions/setup-repo
+            - name: Format
+              id: check_format
+              continue-on-error: true
+              run: |
+                  echo "::group::Format"
+                  npm run format:check
+                  echo "::endgroup::"
+
+            - name: Fix formatting if check failed
+              if: always() && steps.check_format.outcome == 'failure'
+              run: npm run format:fix
+
+            - name: Commit formatting changes
+              if: always() && steps.check_format.outcome == 'failure'
+              uses: stefanzweifel/git-auto-commit-action@v7
+              with:
+                  commit_message: "style: automated format fix"
+                  commit_user_name: "github-actions[bot]"
+                  commit_user_email: "github-actions[bot]@users.noreply.github.com"
+
+            - name: Fail step if formatting had to be fixed
+              if: always() && steps.check_format.outcome == 'failure'
+              run: |
+                  echo "Code formatting issues were detected and auto-fixed."
+                  exit 1
