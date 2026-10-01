@@ -65,7 +65,11 @@ const canonicalUrl = new URL(Astro.url.pathname, SITE.URL);
 
     :root {
         --ulpgc-orange: #ffa100;
+        --ulpgc-orange-dark: #e69100;
+
         --ulpgc-blue: #0066a1;
+        --ulpgc-blue-dark: #023857;
+
         --ulpgc-gray: #545859;
 
         --font-ulpgc: "Rubik", sans-serif;
@@ -82,8 +86,33 @@ const canonicalUrl = new URL(Astro.url.pathname, SITE.URL);
 
     body {
         min-height: 100dvh;
+        width: 100vw;
+        max-width: 100%;
         display: grid;
+        overflow-x: hidden;
         grid-template-rows: 15dvh minmax(auto, 1fr) auto;
+    }
+
+    main {
+        width: 100vw;
+    }
+
+    @media (min-width: 1032px) {
+        ::-webkit-scrollbar {
+            width: 5px;
+            background: transparent;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--ulpgc-blue);
+            border-radius: 10px;
+        }
+    }
+
+    @media (max-width: 1032px) {
+        body {
+            grid-template-rows: 10dvh minmax(auto, 1fr) auto;
+        }
     }
 </style>
 
