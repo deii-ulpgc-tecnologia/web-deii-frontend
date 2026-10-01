@@ -1,20 +1,39 @@
 ---
-import NAVIGATION from "@/constants/Site";
+import { NAVIGATION } from "@/constants/Site";
+import NavigationItem from "@/components/base/NavigationItem.astro";
+import QuickAuth from "@/components/authentication/QuickAuth.astro";
 ---
 
 <header>
     <a href="/">
-        <img alt="Logo de la DEII" src="logo.png" />
+        <img alt="Logo de la DEII" src="/logo.png" />
     </a>
+    <nav>
+        <ul>
+            {NAVIGATION.map((nav) => (
+                <NavigationItem
+                    label={nav.label}
+                    path={nav.path}
+                    children={nav.children}
+                    icon={nav.icon}
+                />
+            ))}
+        </ul>
+    </nav>
+    <QuickAuth />
 </header>
 
 <style>
     header {
         width: 100%;
-        height: 10dvh;
-        background: var(--ulpgc-blue);
+        height: 15dvh;
+        border-bottom: 4px solid var(--ulpgc-blue);
+        box-shadow: 5px 0 20px var(--ulpgc-blue);
         display: flex;
+        justify-content: space-between;
+        align-items: center;
         padding: 0 10px;
+
         > a {
             width: auto;
             height: 100%;
@@ -22,14 +41,22 @@ import NAVIGATION from "@/constants/Site";
             > img {
                 width: auto;
                 height: 100%;
-                --border-size: 0.05px;
-                filter: drop-shadow(var(--border-size) 0 0 white)
-                    drop-shadow(calc(var(--border-size) * -1) 0 0 white)
-                    drop-shadow(0 var(--border-size) 0 white)
-                    drop-shadow(0 calc(var(--border-size) * -1) 0 white);
+            }
+        }
+
+        nav {
+            height: 100%;
+            padding: 0 20px;
+
+            ul {
+                height: 100%;
+                text-decoration: none;
+                list-style: none;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                gap: 15px;
             }
         }
     }
 </style>
-
-<script></script>
