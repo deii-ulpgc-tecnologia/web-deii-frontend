@@ -1,24 +1,51 @@
+import js from "@eslint/js";
+import { defineConfig, globalIgnores } from "eslint/config";
+import eslintConfigPrettier from "eslint-config-prettier";
 import eslintPluginAstro from "eslint-plugin-astro";
-import eslintPluginPrettierRecommended from "eslint-plugin-prettier/recommended";
+import globals from "globals";
 import tseslint from "typescript-eslint";
 
-export default tseslint.config(
-    // 1. Astro rules + Astro accessibility rules combined
-    ...eslintPluginAstro.configs.recommended,
-    ...eslintPluginAstro.configs["jsx-a11y-recommended"],
+export default defineConfig([
+    globalIgnores(["dist/", ".astro/", "node_modules/"]),
 
-    // 2. TypeScript configuration rules — scoped so it doesn't override the Astro parser
-    {
-        files: ["**/*.{ts,tsx,mts,cts,js,mjs,cjs}"],
-        extends: [...tseslint.configs.recommended],
-    },
+    // Base JS + TS rules
+    js.configs.recommended,
+    tseslint.configs.recommended,
+
+    // Astro rules + accessibility rules
+    eslintPluginAstro.configs.recommended,
 
     {
-        rules: {
-            // Your custom overrides go here
+        languageOptions: {
+            globals: { ...globals.browser, ...globals.node },
         },
     },
 
-    // 3. MUST BE LAST: Prettier config (single object, don't spread)
-    eslintPluginPrettierRecommended,
-);
+    // TypeScript in the frontmatter (--- ---) of .astro files
+    {
+        files: ["**/*.astro"],
+        languageOptions: {
+            parserOptions: {
+                parser: tseslint.parser,
+                extraFileExtensions: [".astro"],
+            },
+        },
+    },
+
+    // TypeScript in <script> blocks (virtual files like Foo.astro/script.js)
+    {
+        files: [
+            "**/*.astro/*.js",
+            "*.astro/*.js",
+            "**/*.astro/*.ts",
+            "*.astro/*.ts",
+        ],
+        languageOptions: {
+            parser: tseslint.parser,
+            sourceType: "module",
+        },
+    },
+
+    // Must be last: disables rules that conflict with Prettier
+    eslintConfigPrettier,
+]);
