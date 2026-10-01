@@ -8,10 +8,17 @@ const { label, path, children, icon } = Astro.props;
 const currentPath = Astro.url.pathname;
 ---
 
-<li class:list={{ active: currentPath === path }}>
+<li class:list={{ active: currentPath === path, "has-children": !!children }}>
     <Icon name={icon} />
     <a href={path}>{label}</a>
-    {children && <Icon name="lucide:chevron-up" />}
+    {children && (
+        <button
+            class="dropdown-toggle"
+            aria-label="Expandir submenú"
+            aria-expanded="false">
+            <Icon name="lucide:chevron-up" />
+        </button>
+    )}
     {children && (
         <ul class="dropdown-content">
             {children.map((nav) => (
@@ -32,6 +39,7 @@ const currentPath = Astro.url.pathname;
         flex-direction: row;
         justify-content: center;
         align-items: center;
+        font-size: inherit;
         gap: 5px;
         transition: all 0.2s linear;
         color: var(--ulpgc-gray);
@@ -43,11 +51,17 @@ const currentPath = Astro.url.pathname;
             color: var(--ulpgc-blue);
         }
 
-        [data-icon="lucide:chevron-up"] {
+        button {
+            background: transparent;
+            border: none;
+            outline: none;
+        }
+
+        .dropdown-toggle [data-icon="lucide:chevron-up"] {
             transition: all ease-in-out 0.3s;
         }
 
-        &:hover > [data-icon="lucide:chevron-up"] {
+        &:hover > .dropdown-toggle [data-icon="lucide:chevron-up"] {
             rotate: 180deg;
         }
 
@@ -62,6 +76,16 @@ const currentPath = Astro.url.pathname;
     a {
         text-decoration: none;
         color: inherit;
+    }
+
+    .dropdown-toggle {
+        background: none;
+        border: none;
+        cursor: pointer;
+        color: inherit;
+        padding: 0;
+        display: flex;
+        align-items: center;
     }
 
     .dropdown-content {
@@ -112,4 +136,72 @@ const currentPath = Astro.url.pathname;
             transform: translateY(-15%);
         }
     }
+
+    @media (max-width: 1032px) {
+        li {
+            justify-content: flex-start;
+            flex-wrap: wrap;
+            font-size: inherit;
+        }
+
+        .dropdown-toggle [data-icon="lucide:chevron-up"] {
+            margin-left: auto;
+        }
+
+        li[data-expanded] > .dropdown-toggle [data-icon="lucide:chevron-up"] {
+            rotate: 180deg;
+        }
+
+        li[data-expanded] > .dropdown-content {
+            display: flex;
+            position: static;
+            width: 100%;
+            opacity: 1;
+            transform: none;
+            padding-top: 5px;
+            padding-left: 15px;
+            border-radius: 0;
+            gap: 0;
+        }
+
+        li[data-expanded] > .dropdown-content li {
+            box-shadow: none;
+            padding: 8px 10px;
+        }
+
+        .dropdown-content {
+            transition: none;
+        }
+
+        /* Disable hover dropdown on mobile */
+        li:hover > .dropdown-content {
+            display: none;
+        }
+
+        li[data-expanded]:hover > .dropdown-content {
+            display: flex;
+        }
+    }
 </style>
+
+<script>
+    import { $$ } from "@/lib/dom-selector";
+
+    function setupDropdowns() {
+        const toggles = $$<HTMLButtonElement>(".dropdown-toggle");
+
+        toggles.forEach((btn) => {
+            btn.addEventListener("click", () => {
+                const li = btn.closest("li");
+                if (!li) return;
+
+                const isExpanded = li.hasAttribute("data-expanded");
+                li.toggleAttribute("data-expanded");
+                btn.setAttribute("aria-expanded", String(!isExpanded));
+            });
+        });
+    }
+
+    document.addEventListener("astro:page-load", setupDropdowns);
+    document.addEventListener("DOMContentLoaded", setupDropdowns);
+</script>
