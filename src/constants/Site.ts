@@ -14,15 +14,26 @@ export const SITE = {
 } as const;
 
 export const NAVIGATION = [
-    { label: "Noticias", path: "/noticias" },
+    { label: "Noticias", path: "/noticias", icon: "lucide:newspaper" },
     {
         label: "Sobre Nosotros",
         path: "/sobre-nosotros",
+        icon: "lucide:info",
         children: [
-            { label: "Historia", path: "/sobre-nosotros/historia" },
+            {
+                label: "Historia",
+                path: "/sobre-nosotros/historia",
+                icon: "lucide:landmark",
+            },
             {
                 label: "Junta Directiva",
                 path: "/sobre-nosotros/junta-directiva",
+                icon: "lucide:medal",
+            },
+            {
+                label: "Nuestra Mascota",
+                path: "/sobre-nosotros/mascota",
+                icon: "lucide:paw-print",
             },
         ],
     },
