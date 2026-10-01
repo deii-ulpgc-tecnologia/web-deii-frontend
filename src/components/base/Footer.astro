@@ -4,10 +4,6 @@ import { Icon } from "astro-icon/components";
 
 <footer>
     <div>
-        <h3>
-            Delegación de Estudiantes de la <br />
-            Escuela de Ingeniería Informática
-        </h3>
         <img alt="Logo de la DEII" src="/logo-blanco.png" />
     </div>
     <div>
@@ -38,18 +34,19 @@ import { Icon } from "astro-icon/components";
 
 <style>
     footer {
+        overflow-x: hidden;
         background: var(--ulpgc-blue);
         width: 100%;
         padding: 20px 40px;
+        padding-left: 0;
         display: grid;
         height: fit-content;
-        grid-template-columns: repeat(3, auto);
+        grid-template-columns: 40% repeat(2, auto);
         color: white;
 
         img {
-            width: 300px;
+            width: 70%;
             object-fit: contain;
-            margin-left: 5vw;
         }
 
         h3 {
@@ -60,6 +57,14 @@ import { Icon } from "astro-icon/components";
             display: flex;
             height: fit-content;
             flex-direction: column;
+
+            &:has(img) {
+                justify-self: center;
+                align-self: center;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+            }
 
             span {
                 font-weight: bold;
@@ -74,6 +79,7 @@ import { Icon } from "astro-icon/components";
             gap: 5px;
             text-decoration: none;
             transition: color 0.2s linear;
+            margin-bottom: 2px;
 
             &:hover {
                 color: #ffffff95;
@@ -103,10 +109,11 @@ import { Icon } from "astro-icon/components";
         }
     }
 
-    @media (max-width: 900px) {
+    @media (max-width: 1040px) {
         footer {
             display: flex;
             flex-direction: column;
+            padding-left: 40px;
 
             img {
                 width: 300px;
