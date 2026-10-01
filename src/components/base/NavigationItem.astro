@@ -15,8 +15,7 @@ const currentPath = Astro.url.pathname;
         <button
             class="dropdown-toggle"
             aria-label="Expandir submenú"
-            aria-expanded="false"
-        >
+            aria-expanded="false">
             <Icon name="lucide:chevron-up" />
         </button>
     )}
@@ -147,6 +146,8 @@ const currentPath = Astro.url.pathname;
 
         .dropdown-toggle [data-icon="lucide:chevron-up"] {
             margin-left: auto;
+            width: 20;
+            height: 20;
         }
 
         li[data-expanded] > .dropdown-toggle [data-icon="lucide:chevron-up"] {
