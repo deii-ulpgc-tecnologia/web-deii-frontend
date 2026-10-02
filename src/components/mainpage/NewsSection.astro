@@ -1,0 +1,242 @@
+---
+import type { News } from "@/types/News";
+
+const NEWS: News[] = [
+    {
+        id: "news-001",
+        title: "Inicio de obras de modernización en la red principal",
+        image: "https://images.unsplash.com/photo-1513694203232-719a280e022f?auto=format&fit=crop&w=1200&q=80",
+        content:
+            "La División de Infraestructura da comienzo a los trabajos de renovación de cableado y fibra óptica en el campus central para garantizar alta disponibilidad. Lorem ipsum dolor sit amet consectetur adipisicing elit. Dolorem architecto quo eius itaque saepe fuga minus voluptatem sunt? Quasi esse blanditiis velit molestias porro qui voluptatibus nobis? Eligendi aliquam quod quos nobis obcaecati consectetur ex soluta, expedita ad ab odit quisquam porro unde totam vel dolore saepe magnam harum natus. Dolore, doloremque modi voluptate vero laudantium culpa laboriosam corrupti consequuntur sequi aspernatur. Id doloremque, atque neque eos vel quos ipsa nostrum sed non inventore libero corrupti temporibus numquam laudantium est exercitationem amet commodi voluptas fugiat architecto autem illo. Delectus, cumque? Laborum debitis necessitatibus veniam dolorum delectus? Sint culpa pariatur repellendus!",
+        publishedAt: new Date("2026-09-15T09:30:00Z"),
+        tags: ["infraestructura", "mantenimiento", "redes"],
+        division: ["infraestructura"],
+    },
+    {
+        id: "news-002",
+        title: "Nueva pasarela peatonal y accesos adaptados",
+        image: "https://images.unsplash.com/photo-1513694203232-719a280e022f?auto=format&fit=crop&w=1200&q=80",
+        content:
+            "Se han finalizado las obras de mejora de accesibilidad en los accesos peatonales sur, garantizando rampas normativas y señalética podotáctil. Eligendi aliquam quod quos nobis obcaecati consectetur ex soluta, expedita ad ab odit quisquam porro unde totam vel dolore saepe magnam harum natus. Dolore, doloremque modi voluptate vero laudantium culpa laboriosam corrupti consequuntur sequi aspernatur.",
+        publishedAt: new Date("2026-09-20T11:00:00Z"),
+        tags: ["accesibilidad", "urbanismo", "obras"],
+        division: ["infraestructura"],
+    },
+    {
+        id: "news-003",
+        title: "Mantenimiento preventivo en centros de transformación eléctrica",
+        image: "https://images.unsplash.com/photo-1473341304170-971dccb5ac1e?auto=format&fit=crop&w=1200&q=80",
+        content:
+            "Durante el próximo fin de semana se programarán cortes parciales de suministro eléctrico de 02:00 a 06:00 para la revisión de los transformadores.",
+        publishedAt: new Date("2026-09-25T16:45:00Z"),
+        tags: ["electricidad", "aviso", "seguridad"],
+        division: ["infraestructura"],
+    },
+    {
+        id: "news-004",
+        title: "Instalación de paneles solares fotovoltaicos en el edificio central",
+        image: "https://images.unsplash.com/photo-1513694203232-719a280e022f?auto=format&fit=crop&w=1200&q=80",
+        content:
+            "Avanza el plan de sostenibilidad con la incorporación de 120 paneles solares que cubrirán hasta el 35% del consumo energético del edificio principal.",
+        publishedAt: new Date("2026-09-28T08:15:00Z"),
+        tags: ["sostenibilidad", "energia", "innovacion"],
+        division: ["infraestructura"],
+    },
+    {
+        id: "news-005",
+        title: "Actualización de los protocolos generales de evacuación",
+        image: "https://images.unsplash.com/photo-1513694203232-719a280e022f?auto=format&fit=crop&w=1200&q=80",
+        content:
+            "Publicada la guía de actuación ante emergencias para el último trimestre del año. No se requieren acciones adicionales por parte de las divisiones operativas.",
+        publishedAt: new Date("2026-10-01T10:00:00Z"),
+        tags: ["seguridad", "normativa"],
+    },
+];
+---
+
+<section id="news">
+    <h2>Noticias</h2>
+    <a href="/noticias">Ver todas →</a>
+
+    <div>
+        {NEWS.slice(0, 4)
+            .sort(
+                (n1, n2) => n1.publishedAt.getTime() - n2.publishedAt.getTime(),
+            )
+            .map((n) => {
+                return (
+                    <a href={`/noticias/${n.id}`}>
+                        <article>
+                            <img src={n.image} alt={n.title} />
+                            <div>
+                                <h3>{n.title}</h3>
+                                <p>{n.content}</p>
+                                <small>
+                                    {n.publishedAt.toLocaleDateString("es-ES")}
+                                </small>
+                                <span>Leer más →</span>
+                            </div>
+                        </article>
+                    </a>
+                );
+            })}
+    </div>
+</section>
+
+<style>
+    section {
+        padding: 20px 10px;
+        width: 80%;
+        margin: 0 auto;
+
+        & > a {
+            color: var(--ulpgc-blue);
+            font-size: 13px;
+            text-decoration: none;
+            transition: color 0.2s linear;
+
+            &:hover {
+                color: var(--ulpgc-blue-dark);
+            }
+        }
+
+        > div {
+            margin-top: 20px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            grid-template-rows: repeat(3, 1fr);
+            width: 100%;
+            gap: 10px 20px;
+            height: max(500px, 40dvh);
+            overflow: hidden;
+
+            a {
+                text-decoration: none;
+                color: inherit;
+            }
+
+            article {
+                width: 100%;
+                height: 100%;
+                overflow: hidden;
+                border-radius: 10px;
+                display: flex;
+                gap: 20px;
+                position: relative;
+
+                img {
+                    width: 30%;
+                    height: 100%;
+                    object-fit: cover;
+                }
+
+                div {
+                    width: 70%;
+                    height: 100%;
+                }
+
+                p {
+                    text-wrap: balance;
+                    text-wrap: pretty;
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+                    display: -webkit-box;
+                    -webkit-line-clamp: 3;
+                    -webkit-box-orient: vertical;
+                }
+
+                h3 {
+                    color: var(--ulpgc-orange-dark);
+                    margin-bottom: 10px;
+                }
+
+                small {
+                    position: absolute;
+                    background: var(--ulpgc-blue);
+                    color: white;
+                    padding: 3px 6px;
+                    font-size: 10px;
+                    border-radius: 20px;
+                    border: 2px solid white;
+                    top: 10px;
+                    left: 10px;
+                }
+
+                span {
+                    color: var(--ulpgc-blue);
+                    position: absolute;
+                    bottom: 0;
+                    right: 0;
+                    font-size: 13px;
+                    text-decoration: none;
+                    transition: color 0.2s linear;
+
+                    &:hover {
+                        color: var(--ulpgc-blue-dark);
+                    }
+                }
+            }
+
+            a:first-child {
+                grid-column: 1;
+                grid-row: 1/4;
+                article {
+                    display: block;
+
+                    img {
+                        width: 100%;
+                        height: 40%;
+                        margin-bottom: 20px;
+                    }
+
+                    div {
+                        width: 100%;
+                        height: 60%;
+                    }
+
+                    p {
+                        -webkit-line-clamp: 10;
+                    }
+
+                    small {
+                        top: 10px;
+                        right: 10px;
+                        left: unset;
+                    }
+                }
+            }
+        }
+    }
+
+    @media (max-width: 1032px) {
+        section {
+            width: 100%;
+            height: fit-content;
+
+            & > div {
+                display: flex;
+                flex-direction: column;
+                height: fit-content;
+                gap: 20px;
+
+                a {
+                    article {
+                        p {
+                            margin-bottom: 20px;
+                        }
+                        img {
+                            height: unset;
+                        }
+                    }
+                }
+
+                a:first-child {
+                    article p {
+                        -webkit-line-clamp: 5;
+                        margin-bottom: 20px;
+                    }
+                }
+            }
+        }
+    }
+</style>
