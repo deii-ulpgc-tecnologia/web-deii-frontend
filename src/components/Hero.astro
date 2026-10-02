@@ -91,13 +91,22 @@
         }
 
         .content {
-            background: var(--ulpgc-blue-dark);
+            --opacity-start: 100%;
+            --opacity-finish: 40%;
+            background: color-mix(
+                var(--ulpgc-blue-dark) var(--opacity-finish),
+                transparent
+            );
             background: linear-gradient(
                 90deg,
-                var(--ulpgc-blue-dark) 0%,
-                var(--ulpgc-blue) 100%
+                color-mix(var(--ulpgc-blue) var(--opacity-start), transparent)
+                    0%,
+                color-mix(
+                        var(--ulpgc-blue-dark) var(--opacity-finish),
+                        transparent
+                    )
+                    10%
             );
-            opacity: 0.5;
             position: absolute;
             left: 40%;
             top: 0;
