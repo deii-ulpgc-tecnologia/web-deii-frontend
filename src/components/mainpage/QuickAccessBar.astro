@@ -1,0 +1,106 @@
+---
+import { Icon } from "astro-icon/components";
+
+const ICON_SIZE = 40;
+---
+
+<section id="quickaccess">
+    <a href="">
+        <Icon name="lucide:merge" size={ICON_SIZE} />
+        <div>
+            <span>Únete a la Delegación</span>
+            <p>
+                Se parte de la DEII y ayuda a la comunidad universitaria de la
+                EII
+            </p>
+        </div>
+    </a>
+    <a href="">
+        <Icon name="lucide:mailbox" size={ICON_SIZE} />
+        <div>
+            <span>Quejas o Sugerencias</span>
+            <p>
+                Cuéntanos tu problema o sugerencia y la tramitaremos lo antes
+                posible
+            </p>
+        </div>
+    </a>
+    <a href="">
+        <Icon name="lucide:calendar-days" size={ICON_SIZE} />
+        <div>
+            <span>Eventos</span>
+            <p>
+                Entérate de que estamos preparando para los estudiantes de la
+                EII
+            </p>
+        </div>
+    </a>
+    <a href="">
+        <Icon name="lucide:book-search" size={ICON_SIZE} />
+        <div>
+            <span>Transparencia</span>
+            <p>
+                Accede a los presupuestos de los eventos y a las normativas de
+                la DEII
+            </p>
+        </div>
+    </a>
+</section>
+
+<style>
+    section {
+        width: 100%;
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+
+        a {
+            display: grid;
+            color: inherit;
+            grid-template-columns: 30% auto;
+            place-items: center;
+            text-decoration: none;
+            padding: 20px;
+            border-top: solid 6px var(--ulpgc-orange);
+            border-bottom: solid 6px var(--ulpgc-orange);
+            transition: background 0.2s linear;
+            cursor: pointer;
+            position: relative;
+
+            span {
+                display: block;
+                font-weight: bold;
+                margin-bottom: 5px;
+            }
+
+            p {
+                font-size: 15px;
+            }
+
+            p,
+            span,
+            [data-icon] {
+                transition: scale 0.2s linear;
+            }
+
+            &:hover {
+                background: color-mix(var(--ulpgc-orange) 20%, white);
+
+                p,
+                span,
+                [data-icon] {
+                    scale: 1.05;
+                }
+            }
+
+            &:not(:last-child)::after {
+                content: "";
+                position: absolute;
+                height: 50%;
+                top: 25%;
+                right: 0;
+                border-right: solid 3px
+                    color-mix(var(--ulpgc-orange) 30%, transparent);
+            }
+        }
+    }
+</style>
