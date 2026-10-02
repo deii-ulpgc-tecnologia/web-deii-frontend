@@ -121,11 +121,46 @@
     @media (max-width: 1032px) {
         section {
             height: 90dvh;
+            display: flex;
+            flex-direction: column;
 
-            img {
-                height: 100%;
+            article {
+                gap: 20px;
+                height: 60%;
+
+                h1 {
+                    font-size: 23px;
+                }
+
+                div {
+                    a {
+                        padding: 5px 10px;
+                        font-size: 12px;
+                        border: 2px solid white;
+                        text-wrap: nowrap;
+                    }
+                }
+            }
+
+            .content {
+                background: linear-gradient(
+                    180deg,
+                    color-mix(
+                            var(--ulpgc-blue) var(--opacity-start),
+                            transparent
+                        )
+                        0%,
+                    color-mix(
+                            var(--ulpgc-blue-dark) var(--opacity-finish),
+                            transparent
+                        )
+                        10%
+                );
+                position: absolute;
+                left: 0;
+                top: 40%;
                 width: 100%;
-                object-fit: cover;
+                height: 60%;
             }
         }
     }
