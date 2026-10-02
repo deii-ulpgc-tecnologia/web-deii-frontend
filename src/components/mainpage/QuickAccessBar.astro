@@ -103,4 +103,35 @@ const ICON_SIZE = 40;
             }
         }
     }
+
+    @media (max-width: 1032px) {
+        section {
+            grid-template-columns: repeat(1, 1fr);
+            grid-template-rows: repeat(4, 1fr);
+
+            a:nth-child(2),
+            a:first-child,
+            a:nth-child(3) {
+                border-bottom: none;
+            }
+
+            a {
+                padding: 5px 10px;
+
+                p,
+                span {
+                    font-size: 13px;
+                }
+
+                [data-icon] {
+                    width: 30;
+                    height: 30;
+                }
+
+                &::after {
+                    content: none !important;
+                }
+            }
+        }
+    }
 </style>
