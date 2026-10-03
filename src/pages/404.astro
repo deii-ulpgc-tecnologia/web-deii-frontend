@@ -2,4 +2,70 @@
 import Layout from "@/layouts/Layout.astro";
 ---
 
-<Layout />
+<Layout>
+    <div>
+        <article>
+            <h1>¿Te has perdido?</h1>
+            <p>
+                Parece que esta página no existe, ¿Seguro que es la ruta que
+                buscas?
+            </p>
+            <p>
+                Si DEII404 no encuentra la página es que no existe. Si crees que
+                se trata de un error reporta a la delegación el error. My bad.
+            </p>
+            <a href="/">Regresar al Inicio</a>
+        </article>
+        <img
+            src="/deii404.gif"
+            loading="eager"
+            alt="DEII404 haciendo una animación de que te has perdido"
+        />
+    </div>
+</Layout>
+
+<style>
+    div {
+        display: flex;
+        height: 100%;
+        align-items: center;
+        padding: 0 20px;
+    }
+
+    h1 {
+        color: var(--ulpgc-orange);
+        margin-bottom: 20px;
+    }
+
+    p {
+        margin: 10px 0;
+    }
+
+    a {
+        color: var(--ulpgc-blue);
+        transition: color 0.2s linear;
+        text-decoration: none;
+
+        &:hover {
+            color: var(--ulpgc-blue-dark);
+        }
+    }
+
+    img {
+        height: 50dvh;
+        width: auto;
+        max-width: 100%;
+        object-fit: contain;
+        align-self: end;
+    }
+
+    @media (max-width: 1032px) {
+        div {
+            flex-direction: column;
+        }
+
+        img {
+            height: min(100%, 50dvh);
+        }
+    }
+</style>
