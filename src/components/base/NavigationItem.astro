@@ -20,14 +20,18 @@ function checkPerms(perms: NavigationItemType["permissions"]) {
             class:list={{
                 active: currentPath === path,
                 "has-children": !!children,
-            }}>
-            <Icon name={icon} />
-            <a href={path}>{label}</a>
+            }}
+        >
+            <a href={path} class="nav-link">
+                <Icon name={icon} />
+                <span>{label}</span>
+            </a>
             {children && (
                 <button
                     class="dropdown-toggle"
                     aria-label="Expandir submenú"
-                    aria-expanded="false">
+                    aria-expanded="false"
+                >
                     <Icon name="lucide:chevron-up" />
                 </button>
             )}
@@ -76,12 +80,13 @@ function checkPerms(perms: NavigationItemType["permissions"]) {
             transition: all ease-in-out 0.3s;
         }
 
-        &:hover > .dropdown-toggle [data-icon="lucide:chevron-up"] {
+        &:hover > .dropdown-toggle [data-icon="lucide:chevron-up"],
+        &:focus-within > .dropdown-toggle [data-icon="lucide:chevron-up"] {
             rotate: 180deg;
         }
 
         &:hover > .dropdown-content,
-        .dropdown-content &:hover {
+        &:focus-within > .dropdown-content {
             display: flex;
             opacity: 1;
             transform: translateY(0);
@@ -91,6 +96,9 @@ function checkPerms(perms: NavigationItemType["permissions"]) {
     a {
         text-decoration: none;
         color: inherit;
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
     }
 
     .dropdown-toggle {
@@ -107,20 +115,19 @@ function checkPerms(perms: NavigationItemType["permissions"]) {
         display: none;
         position: absolute;
         height: fit-content;
-        width: fit-content;
+        width: max-content;
+        min-width: 100%;
         border-radius: 10px;
-        padding-top: 30px;
-        float: left;
-        bottom: 0;
-        top: 0;
+        padding-top: 10px;
+        top: 100%;
         left: 0;
-        z-index: 1;
+        z-index: 100;
         flex-direction: column;
         flex-wrap: nowrap;
         text-wrap: nowrap;
         gap: 0px;
         opacity: 0;
-        transform: translateY(-15%);
+        transform: translateY(-8px);
         transition:
             display 0.1s allow-discrete,
             opacity 0.3s ease,
@@ -143,13 +150,18 @@ function checkPerms(perms: NavigationItemType["permissions"]) {
             &:last-child {
                 border-radius: 0 0 5px 5px;
             }
+
+            & a {
+                width: 100%;
+            }
         }
     }
 
     @starting-style {
-        li:hover > .dropdown-content {
+        li:hover > .dropdown-content,
+        li:focus-within > .dropdown-content {
             opacity: 0;
-            transform: translateY(-15%);
+            transform: translateY(-8px);
         }
     }
 
@@ -166,11 +178,19 @@ function checkPerms(perms: NavigationItemType["permissions"]) {
             height: 20;
         }
 
+        /* Disable hover dropdown on mobile */
+        li:hover > .dropdown-content,
+        li:focus-within > .dropdown-content {
+            display: none;
+        }
+
         li[data-expanded] > .dropdown-toggle [data-icon="lucide:chevron-up"] {
             rotate: 180deg;
         }
 
-        li[data-expanded] > .dropdown-content {
+        li[data-expanded] > .dropdown-content,
+        li[data-expanded]:hover > .dropdown-content,
+        li[data-expanded]:focus-within > .dropdown-content {
             display: flex;
             position: static;
             width: 100%;
@@ -189,15 +209,6 @@ function checkPerms(perms: NavigationItemType["permissions"]) {
 
         .dropdown-content {
             transition: none;
-        }
-
-        /* Disable hover dropdown on mobile */
-        li:hover > .dropdown-content {
-            display: none;
-        }
-
-        li[data-expanded]:hover > .dropdown-content {
-            display: flex;
         }
     }
 </style>
