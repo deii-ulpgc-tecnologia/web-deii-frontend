@@ -3,6 +3,8 @@ import { NAVIGATION } from "@/constants/Site";
 import NavigationItem from "@/components/base/NavigationItem.astro";
 import QuickAuth from "@/components/authentication/QuickAuth.astro";
 import { Icon } from "astro-icon/components";
+
+console.log(JSON.stringify(NAVIGATION));
 ---
 
 <header>
@@ -17,6 +19,7 @@ import { Icon } from "astro-icon/components";
                     path={nav.path}
                     children={nav.children}
                     icon={nav.icon}
+                    permissions={nav.permissions}
                 />
             ))}
         </ul>

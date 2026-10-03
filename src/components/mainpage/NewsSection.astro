@@ -63,23 +63,21 @@ const NEWS: News[] = [
             .sort(
                 (n1, n2) => n1.publishedAt.getTime() - n2.publishedAt.getTime(),
             )
-            .map((n) => {
-                return (
-                    <a href={`/noticias/${n.id}`}>
-                        <article>
-                            <img src={n.image} alt={n.title} />
-                            <div>
-                                <h3>{n.title}</h3>
-                                <p>{n.content}</p>
-                                <small>
-                                    {n.publishedAt.toLocaleDateString("es-ES")}
-                                </small>
-                                <span>Leer más →</span>
-                            </div>
-                        </article>
-                    </a>
-                );
-            })}
+            .map((n) => (
+                <a href={`/noticias/${n.id}`}>
+                    <article>
+                        <img src={n.image} alt={n.title} />
+                        <div>
+                            <h3>{n.title}</h3>
+                            <p>{n.content}</p>
+                            <small>
+                                {n.publishedAt.toLocaleDateString("es-ES")}
+                            </small>
+                            <span>Leer más →</span>
+                        </div>
+                    </article>
+                </a>
+            ))}
     </div>
 </section>
 

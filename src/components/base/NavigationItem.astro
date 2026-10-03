@@ -4,35 +4,49 @@ import { Icon } from "astro-icon/components";
 
 export type Props = NavigationItemType;
 
-const { label, path, children, icon } = Astro.props;
+const { label, path, children, icon, permissions } = Astro.props;
 const currentPath = Astro.url.pathname;
+
+function checkPerms(perms: NavigationItemType["permissions"]) {
+    console.log(perms);
+    if (!perms) return true;
+    return false;
+}
 ---
 
-<li class:list={{ active: currentPath === path, "has-children": !!children }}>
-    <Icon name={icon} />
-    <a href={path}>{label}</a>
-    {children && (
-        <button
-            class="dropdown-toggle"
-            aria-label="Expandir submenú"
-            aria-expanded="false"
-        >
-            <Icon name="lucide:chevron-up" />
-        </button>
-    )}
-    {children && (
-        <ul class="dropdown-content">
-            {children.map((nav) => (
-                <Astro.self
-                    label={nav.label}
-                    path={nav.path}
-                    children={nav.children}
-                    icon={nav.icon}
-                />
-            ))}
-        </ul>
-    )}
-</li>
+{checkPerms(permissions) && (
+    <>
+        <li
+            class:list={{
+                active: currentPath === path,
+                "has-children": !!children,
+            }}>
+            <Icon name={icon} />
+            <a href={path}>{label}</a>
+            {children && (
+                <button
+                    class="dropdown-toggle"
+                    aria-label="Expandir submenú"
+                    aria-expanded="false">
+                    <Icon name="lucide:chevron-up" />
+                </button>
+            )}
+            {children && (
+                <ul class="dropdown-content">
+                    {children.map((nav) => (
+                        <Astro.self
+                            label={nav.label}
+                            path={nav.path}
+                            children={nav.children}
+                            icon={nav.icon}
+                            permissions={nav.permissions}
+                        />
+                    ))}
+                </ul>
+            )}
+        </li>
+    </>
+)}
 
 <style>
     li {
