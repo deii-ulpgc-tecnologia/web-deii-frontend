@@ -36,6 +36,9 @@ export const PATHS = {
     PARTICULAR_CLASSES: "/estudiantado/clases-particulares",
     COMPLAINTS_SUGGESTIONS: "/estudiantado/quejas-sugerencias",
     MOBILITY_EXPERIENCES: "/estudiantado/experiencias-movilidad",
+
+    /* OTHER */
+    JOIN_US: "/join-us",
 } as const;
 
 export const NAVIGATION = [

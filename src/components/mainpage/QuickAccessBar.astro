@@ -1,11 +1,12 @@
 ---
+import { PATHS } from "@/constants/Site";
 import { Icon } from "astro-icon/components";
 
 const ICON_SIZE = 40;
 ---
 
 <section id="quickaccess">
-    <a href="">
+    <a href={PATHS.JOIN_US}>
         <Icon name="lucide:merge" size={ICON_SIZE} />
         <div>
             <span>Únete a la Delegación</span>
@@ -15,7 +16,7 @@ const ICON_SIZE = 40;
             </p>
         </div>
     </a>
-    <a href="">
+    <a href={PATHS.COMPLAINTS_SUGGESTIONS}>
         <Icon name="lucide:mailbox" size={ICON_SIZE} />
         <div>
             <span>Quejas o Sugerencias</span>
@@ -25,7 +26,7 @@ const ICON_SIZE = 40;
             </p>
         </div>
     </a>
-    <a href="">
+    <a href={PATHS.EVENTS}>
         <Icon name="lucide:calendar-days" size={ICON_SIZE} />
         <div>
             <span>Eventos</span>
@@ -35,7 +36,7 @@ const ICON_SIZE = 40;
             </p>
         </div>
     </a>
-    <a href="">
+    <a href={PATHS.TRANSPARENCY}>
         <Icon name="lucide:book-search" size={ICON_SIZE} />
         <div>
             <span>Transparencia</span>

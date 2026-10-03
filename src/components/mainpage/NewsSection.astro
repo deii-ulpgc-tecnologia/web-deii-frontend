@@ -1,4 +1,5 @@
 ---
+import { PATHS } from "@/constants/Site";
 import type { News } from "@/types/News";
 
 const NEWS: News[] = [
@@ -56,7 +57,7 @@ const NEWS: News[] = [
 
 <section id="news">
     <h2>Noticias</h2>
-    <a href="/noticias">Ver todas →</a>
+    <a href={PATHS.NEWS}>Ver todas →</a>
 
     <div>
         {NEWS.slice(0, 4)
@@ -64,7 +65,7 @@ const NEWS: News[] = [
                 (n1, n2) => n1.publishedAt.getTime() - n2.publishedAt.getTime(),
             )
             .map((n) => (
-                <a href={`/noticias/${n.id}`}>
+                <a href={`${PATHS.NEWS}/${n.id}`}>
                     <article>
                         <img src={n.image} alt={n.title} />
                         <div>
