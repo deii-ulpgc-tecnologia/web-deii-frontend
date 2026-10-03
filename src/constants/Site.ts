@@ -13,27 +13,113 @@ export const SITE = {
     CATEGORIES: ["delegacion", "ulpgc", "eii", "deii"],
 } as const;
 
+export const PATHS = {
+    /* COMUNICATION */
+    COMMUNICATION: "/comunicacion",
+    NEWS: "/comunicacion/noticias",
+    EVENTS: "/comunicacion/eventos",
+
+    /* ABOUT US */
+    ABOUT_US: "/sobre-nosotros",
+    BOARD_DIRECTORS: "/sobre-nosotros/junta-directiva",
+    PET: "/sobre-nosotros/mascota",
+    DIVISIONS: "/sobre-nosotros/divisiones",
+
+    /* TRANSPARENCY */
+    TRANSPARENCY: "/transparencia",
+    REGULATION: "/transparencia/reglamentos",
+    EXPENSES: "/transparencia/gastos",
+    PROCEEDINGS: "/transparencia/actas",
+
+    /* STUDENTS */
+    STUDENTS: "/estudiantado",
+    PARTICULAR_CLASSES: "/estudiantado/clases-particulares",
+    COMPLAINTS_SUGGESTIONS: "/estudiantado/quejas-sugerencias",
+    MOBILITY_EXPERIENCES: "/estudiantado/experiencias-movilidad",
+} as const;
+
 export const NAVIGATION = [
-    { label: "Noticias", path: "/noticias", icon: "lucide:newspaper" },
+    {
+        label: "Comunicación",
+        path: PATHS.COMMUNICATION,
+        icon: "lucide:megaphone",
+        children: [
+            {
+                label: "Noticias",
+                path: PATHS.NEWS,
+                icon: "lucide:newspaper",
+            },
+            {
+                label: "Eventos",
+                path: PATHS.EVENTS,
+                icon: "lucide:calendar-days",
+            },
+        ],
+    },
     {
         label: "Sobre Nosotros",
-        path: "/sobre-nosotros",
+        path: PATHS.ABOUT_US,
         icon: "lucide:info",
         children: [
             {
-                label: "Historia",
-                path: "/sobre-nosotros/historia",
-                icon: "lucide:landmark",
-            },
-            {
                 label: "Junta Directiva",
-                path: "/sobre-nosotros/junta-directiva",
+                path: PATHS.BOARD_DIRECTORS,
                 icon: "lucide:medal",
             },
             {
                 label: "Nuestra Mascota",
-                path: "/sobre-nosotros/mascota",
+                path: PATHS.PET,
                 icon: "lucide:paw-print",
+            },
+            {
+                label: "Divisiones",
+                path: PATHS.DIVISIONS,
+                icon: "lucide:boxes",
+            },
+        ],
+    },
+    {
+        label: "Transparencia",
+        path: PATHS.TRANSPARENCY,
+        icon: "lucide:book-search",
+        children: [
+            {
+                label: "Reglamentos",
+                path: PATHS.REGULATION,
+                icon: "lucide:scale",
+            },
+            {
+                label: "Gastos",
+                path: PATHS.EXPENSES,
+                icon: "lucide:wallet",
+            },
+            {
+                label: "Actas",
+                path: PATHS.PROCEEDINGS,
+                icon: "lucide:file-text",
+                permissions: ["member"],
+            },
+        ],
+    },
+    {
+        label: "Estudiantado",
+        path: PATHS.STUDENTS,
+        icon: "lucide:graduation-cap",
+        children: [
+            {
+                label: "Clases particulares",
+                path: PATHS.PARTICULAR_CLASSES,
+                icon: "lucide:school",
+            },
+            {
+                label: "Quejas y Sugerencias",
+                path: PATHS.COMPLAINTS_SUGGESTIONS,
+                icon: "lucide:messages-square",
+            },
+            {
+                label: "Experiencias en Movilidad",
+                path: PATHS.MOBILITY_EXPERIENCES,
+                icon: "lucide:plane",
             },
         ],
     },
