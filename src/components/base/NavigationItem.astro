@@ -8,7 +8,6 @@ const { label, path, children, icon, permissions } = Astro.props;
 const currentPath = Astro.url.pathname;
 
 function checkPerms(perms: NavigationItemType["permissions"]) {
-    console.log(perms);
     if (!perms) return true;
     return false;
 }
@@ -20,8 +19,7 @@ function checkPerms(perms: NavigationItemType["permissions"]) {
             class:list={{
                 active: currentPath === path,
                 "has-children": !!children,
-            }}
-        >
+            }}>
             <a href={path} class="nav-link">
                 <Icon name={icon} />
                 <span>{label}</span>
@@ -30,8 +28,7 @@ function checkPerms(perms: NavigationItemType["permissions"]) {
                 <button
                     class="dropdown-toggle"
                     aria-label="Expandir submenú"
-                    aria-expanded="false"
-                >
+                    aria-expanded="false">
                     <Icon name="lucide:chevron-up" />
                 </button>
             )}
