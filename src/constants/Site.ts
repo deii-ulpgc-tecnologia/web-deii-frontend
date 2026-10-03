@@ -33,6 +33,7 @@ export const PATHS = {
 
     /* STUDENTS */
     STUDENTS: "/estudiantado",
+    SUBJECTS_DOCUMENTATION: "/estudiantado/asignaturas-documentacion",
     PARTICULAR_CLASSES: "/estudiantado/clases-particulares",
     COMPLAINTS_SUGGESTIONS: "/estudiantado/quejas-sugerencias",
     MOBILITY_EXPERIENCES: "/estudiantado/experiencias-movilidad",
@@ -109,6 +110,11 @@ export const NAVIGATION = [
         path: PATHS.STUDENTS,
         icon: "lucide:graduation-cap",
         children: [
+            {
+                label: "Asignaturas y Documentación",
+                path: PATHS.SUBJECTS_DOCUMENTATION,
+                icon: "lucide:folder-archive",
+            },
             {
                 label: "Clases particulares",
                 path: PATHS.PARTICULAR_CLASSES,
