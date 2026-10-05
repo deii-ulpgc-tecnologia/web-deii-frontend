@@ -90,7 +90,11 @@ function getHexColorFromString(str: string) {
         acc[targetIndex] = (acc[targetIndex] + byte) % 256;
         return acc;
     }, new Uint8Array(3));
-    return "#" + Buffer.from(rgb).toString("hex");
+
+    const combinedInt = (rgb[0] << 16) + (rgb[1] << 8) + rgb[2];
+    const hue = combinedInt % 360;
+
+    return `hsl(${hue}, 60%, 80%)`;
 }
 
 /**
