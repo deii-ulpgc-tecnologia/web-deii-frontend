@@ -1,0 +1,357 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import { PATHS } from "@/constants/Site";
+import { NEWS } from "@/constants/News";
+
+export const prerender = false;
+
+const searchParams = Astro.url.searchParams;
+const currentPage = Number(searchParams.get("page")) || 1;
+const searchQuery = searchParams.get("search")?.toLowerCase() || "";
+const divisionFilter = searchParams.get("division") || "all";
+const tagsFilter = searchParams.get("tags")?.toLowerCase() || "";
+const dateFrom = searchParams.get("dateFrom") || "";
+const dateTo = searchParams.get("dateTo") || "";
+
+let filteredNews = NEWS.sort(
+    (n1, n2) => n2.publishedAt.getTime() - n1.publishedAt.getTime(),
+);
+
+if (searchQuery) {
+    filteredNews = filteredNews.filter((n) =>
+        n.title.toLowerCase().includes(searchQuery),
+    );
+}
+
+if (divisionFilter !== "all") {
+    filteredNews = filteredNews.filter((n) =>
+        (n.division as string[] | undefined)?.includes(divisionFilter),
+    );
+}
+
+if (tagsFilter) {
+    const searchTags = tagsFilter
+        .split(",")
+        .map((t) => t.trim())
+        .filter((t) => t !== "");
+    filteredNews = filteredNews.filter((n) =>
+        searchTags.some((tag) =>
+            n.tags?.some((nTag) => nTag.toLowerCase().includes(tag)),
+        ),
+    );
+}
+
+if (dateFrom) {
+    const from = new Date(dateFrom);
+    filteredNews = filteredNews.filter((n) => n.publishedAt >= from);
+}
+
+if (dateTo) {
+    const to = new Date(dateTo);
+    to.setHours(23, 59, 59, 999);
+    filteredNews = filteredNews.filter((n) => n.publishedAt <= to);
+}
+
+const ITEMS_PER_PAGE = 4;
+const totalItems = filteredNews.length;
+const totalPages = Math.ceil(totalItems / ITEMS_PER_PAGE) || 1;
+
+const validPage = Math.max(1, Math.min(currentPage, totalPages));
+
+const startIndex = (validPage - 1) * ITEMS_PER_PAGE;
+const endIndex = startIndex + ITEMS_PER_PAGE;
+const paginatedNews = filteredNews.slice(startIndex, endIndex);
+
+function getPageUrl(pageNum: number) {
+    const params = new URLSearchParams(searchParams);
+    params.set("page", pageNum.toString());
+    return `${PATHS.NEWS}?${params.toString()}`;
+}
+---
+
+<Layout title="Noticias - Delegación de Estudiantes">
+    <main>
+        <h1>Archivo de Noticias</h1>
+
+        <div class="layout-noticias">
+            <aside class="filtros">
+                <h3>Filtros</h3>
+
+                <form method="GET" action={PATHS.NEWS}>
+                    <input type="hidden" name="page" value="1" />
+
+                    <label for="search">Buscar por título</label>
+                    <input
+                        type="text"
+                        id="search"
+                        name="search"
+                        placeholder="Ej: Obras, elecciones..."
+                        value={searchQuery}
+                    />
+
+                    <label for="division">División</label>
+                    <select id="division" name="division">
+                        <option value="all" selected={divisionFilter === "all"}>
+                            Todas
+                        </option>
+                        <option
+                            value="infraestructura"
+                            selected={divisionFilter === "infraestructura"}
+                        >
+                            Infraestructura
+                        </option>
+                    </select>
+
+                    <label for="tags">Etiquetas (Tags)</label>
+                    <input
+                        type="text"
+                        id="tags"
+                        name="tags"
+                        placeholder="Ej: accesibilidad, normativa"
+                        value={tagsFilter}
+                    />
+
+                    <label for="dateFrom">Fecha desde:</label>
+                    <input
+                        type="date"
+                        id="dateFrom"
+                        name="dateFrom"
+                        value={dateFrom}
+                    />
+
+                    <label for="dateTo">Fecha hasta:</label>
+                    <input
+                        type="date"
+                        id="dateTo"
+                        name="dateTo"
+                        value={dateTo}
+                    />
+
+                    <div class="form-actions">
+                        <button type="submit" id="apply-filters">
+                            Aplicar filtros
+                        </button>
+                        <a href={PATHS.NEWS} class="btn-secondary">
+                            Limpiar
+                        </a>
+                    </div>
+                </form>
+            </aside>
+
+            <section class="lista-resultados">
+                <div class="news-grid">
+                    {paginatedNews.length > 0 ? (
+                        paginatedNews.map((n) => (
+                            <a href={`${PATHS.NEWS}/${n.id}`} class="news-card">
+                                <article>
+                                    <img src={n.image} alt={n.title} />
+                                    <div class="content">
+                                        <h4>{n.title}</h4>
+                                        <small>
+                                            {n.publishedAt.toLocaleDateString(
+                                                "es-ES",
+                                            )}
+                                        </small>
+                                        <p>{n.content}</p>
+                                    </div>
+                                </article>
+                            </a>
+                        ))
+                    ) : (
+                        <p class="no-results">
+                            No se encontraron noticias con estos filtros.
+                        </p>
+                    )}
+                </div>
+
+                {totalPages > 1 && (
+                    <nav class="paginacion">
+                        {validPage > 1 ? (
+                            <a href={getPageUrl(validPage - 1)} class="btn-pag">
+                                &larr; Anterior
+                            </a>
+                        ) : (
+                            <span class="btn-pag disabled">
+                                &larr; Anterior
+                            </span>
+                        )}
+
+                        <span class="info-pag">
+                            Página {validPage} de {totalPages}
+                        </span>
+
+                        {validPage < totalPages ? (
+                            <a href={getPageUrl(validPage + 1)} class="btn-pag">
+                                Siguiente &rarr;
+                            </a>
+                        ) : (
+                            <span class="btn-pag disabled">
+                                Siguiente &rarr;
+                            </span>
+                        )}
+                    </nav>
+                )}
+            </section>
+        </div>
+    </main>
+</Layout>
+
+<style>
+    main {
+        width: 95%;
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 40px 20px;
+    }
+    h1 {
+        color: var(--ulpgc-blue);
+        margin-bottom: 30px;
+    }
+    .layout-noticias {
+        display: flex;
+        gap: 40px;
+        align-items: start;
+    }
+
+    .filtros {
+        width: 25%;
+        background: #f8f9fa;
+        padding: 20px;
+        border-radius: 8px;
+        border: 1px solid #ddd;
+    }
+    form {
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+    }
+    .filtros label {
+        font-weight: bold;
+        font-size: 14px;
+        color: var(--ulpgc-blue);
+    }
+    .filtros input,
+    .filtros select {
+        padding: 8px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+    }
+
+    .form-actions {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        margin-top: 10px;
+    }
+    #apply-filters {
+        background-color: var(--ulpgc-blue);
+        color: white;
+        border: none;
+        padding: 10px;
+        border-radius: 4px;
+        cursor: pointer;
+        font-weight: bold;
+    }
+    .btn-secondary {
+        background-color: transparent;
+        color: #666;
+        border: 1px solid #ccc;
+        padding: 10px;
+        border-radius: 4px;
+        text-align: center;
+        text-decoration: none;
+        display: block;
+    }
+
+    .lista-resultados {
+        width: 75%;
+        display: flex;
+        flex-direction: column;
+        gap: 40px;
+    }
+    .news-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 20px;
+    }
+    .news-card {
+        text-decoration: none;
+        color: inherit;
+        border: 1px solid #eee;
+        border-radius: 8px;
+        overflow: hidden;
+        transition:
+            transform 0.2s,
+            box-shadow 0.2s;
+    }
+    .news-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    }
+    .news-card img {
+        width: 100%;
+        height: 200px;
+        object-fit: cover;
+    }
+    .content {
+        padding: 20px;
+    }
+    .content h4 {
+        color: var(--ulpgc-orange-dark);
+        margin: 0 0 10px 0;
+    }
+    .content small {
+        display: block;
+        color: #666;
+        margin-bottom: 10px;
+    }
+    .content p {
+        text-wrap: pretty;
+        display: -webkit-box;
+        -webkit-line-clamp: 3;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+        margin: 0;
+    }
+    .no-results {
+        grid-column: span 2;
+        text-align: center;
+        color: #666;
+        padding: 40px;
+    }
+
+    .paginacion {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 15px;
+        padding-top: 20px;
+        border-top: 1px solid #ddd;
+    }
+    .btn-pag {
+        padding: 8px 16px;
+        background: var(--ulpgc-blue);
+        color: white;
+        text-decoration: none;
+        border-radius: 4px;
+    }
+    .btn-pag.disabled {
+        background: #ccc;
+        pointer-events: none;
+    }
+
+    @media (max-width: 1024px) {
+        .layout-noticias {
+            flex-direction: column;
+        }
+        .filtros,
+        .lista-resultados {
+            width: 100%;
+        }
+    }
+    @media (max-width: 768px) {
+        .news-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
