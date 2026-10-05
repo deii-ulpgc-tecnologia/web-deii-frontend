@@ -1,0 +1,49 @@
+---
+import { Icon } from "astro-icon/components";
+
+export interface Props {
+    icon: string;
+    title: string;
+    value: string | number;
+}
+
+const { icon, title, value } = Astro.props;
+---
+
+<div class="data-holder">
+    <Icon name={icon} size={20} />
+    <div>
+        <span>{title}</span>
+        <span>{value}</span>
+    </div>
+</div>
+
+<style>
+    .data-holder {
+        display: grid;
+        grid-template-columns: 40px auto;
+        width: fit-content;
+        gap: 20px;
+        place-items: center;
+
+        & > div {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+
+            span {
+                text-wrap: nowrap;
+            }
+
+            & span:first-child {
+                color: gray;
+                text-transform: uppercase;
+                font-size: small;
+            }
+
+            & span:last-child {
+                font-weight: bold;
+            }
+        }
+    }
+</style>

@@ -1,0 +1,29 @@
+---
+export interface Props {
+    color?: string;
+}
+
+const color = Astro.props.color ?? "transparent";
+---
+
+<div aria-role="tag" style={`--tag-color: ${color}`} class="tag">
+    <slot />
+</div>
+
+<style>
+    div {
+        --tag-color: transparent;
+        background: var(--tag-color);
+        color: oklch(from var(--tag-color) round(1.21 - L) 0 0);
+        color: contrast-color(var(--tag-color));
+        border-radius: 40px;
+        padding: 3px 6px;
+        font-size: small;
+    }
+
+    @media (max-width: 1032px) {
+        div {
+            font-size: x-small;
+        }
+    }
+</style>
