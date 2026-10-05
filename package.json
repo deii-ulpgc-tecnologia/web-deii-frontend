@@ -26,6 +26,7 @@
         "@eslint/js": "10.0.1",
         "@iconify-json/akar-icons": "1.2.7",
         "@iconify-json/lucide": "1.2.138",
+        "@types/node": "26.6.4",
         "eslint": "10.11.0",
         "eslint-config-prettier": "10.1.8",
         "eslint-plugin-astro": "3.2.1",

@@ -33,7 +33,7 @@ export const PATHS = {
 
     /* STUDENTS */
     STUDENTS: "/estudiantado",
-    SUBJECTS_DOCUMENTATION: "/estudiantado/asignaturas-documentacion",
+    SUBJECTS_DOCUMENTATION: "/estudiantado/asignaturas",
     PARTICULAR_CLASSES: "/estudiantado/clases-particulares",
     COMPLAINTS_SUGGESTIONS: "/estudiantado/quejas-sugerencias",
     MOBILITY_EXPERIENCES: "/estudiantado/experiencias-movilidad",

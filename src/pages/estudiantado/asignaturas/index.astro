@@ -1,0 +1,34 @@
+---
+import SubjectCard from "@/components/subjects/SubjectCard.astro";
+import Layout from "@/layouts/Layout.astro";
+import { getAllSubjects } from "@/lib/subject-manager";
+
+const SUBJECTS = getAllSubjects();
+---
+
+<Layout>
+    <div>
+        {SUBJECTS.map((sub) => (
+            <SubjectCard
+                name={sub.name}
+                degree={sub.degree}
+                year={sub.year}
+                semester={sub.semester}
+                description={sub.description}
+                type={sub.type}
+                bg_color={sub.bg_color}
+                code={sub.code}
+                credits={sub.credits}
+                slug={sub.slug}
+                degree_color={sub.degree_color}
+            />
+        ))}
+    </div>
+</Layout>
+
+<style>
+    div {
+        display: flex;
+        padding: 40px;
+    }
+</style>
