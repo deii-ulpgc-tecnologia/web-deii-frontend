@@ -1,0 +1,609 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import {
+    FileSpreadsheet,
+    FileUp,
+    X,
+    Download,
+    Trash2,
+    Eye,
+} from "lucide-astro";
+---
+
+<Layout title="Gastos - Delegación de Estudiantes">
+    <div style="display: none;">
+        <template id="tpl-icon-excel">
+            <FileSpreadsheet size={64} stroke-width={1.2} color="#85b2e6" />
+        </template>
+        <template id="tpl-icon-eye">
+            <Eye size={18} />
+        </template>
+        <template id="tpl-icon-download">
+            <Download size={16} />
+        </template>
+        <template id="tpl-icon-trash">
+            <Trash2 size={16} />
+        </template>
+    </div>
+
+    <main>
+        <div class="header-gastos">
+            <h1>Gestión Económica y Gastos</h1>
+            <p>
+                Sube los documentos y presupuestos (solo formato Excel) para
+                previsualizarlos o descargarlos.
+            </p>
+        </div>
+
+        <section class="upload-section">
+            <div class="upload-card">
+                <h3>
+                    <FileUp size={24} /> Subir Documento Excel
+                </h3>
+                <form id="upload-form">
+                    <div class="form-group">
+                        <label for="file-title">Título del documento</label>
+                        <input
+                            type="text"
+                            id="file-title"
+                            required
+                            placeholder="Ej: Presupuesto Octubre 2026"
+                            autocomplete="off"
+                        />
+                    </div>
+                    <div class="form-group">
+                        <label for="file-input">
+                            Archivo Excel (.xlsx, .xls)
+                        </label>
+                        <input
+                            type="file"
+                            id="file-input"
+                            accept=".xlsx, .xls"
+                            required
+                        />
+                    </div>
+                    <button type="submit" class="btn-submit">
+                        Subir Archivo
+                    </button>
+                </form>
+            </div>
+        </section>
+
+        <section class="documents-section">
+            <h3>Mis Guardados</h3>
+            <div class="documents-grid" id="documents-grid">
+                <p class="empty-state" id="empty-state">
+                    No hay documentos guardados aún.
+                </p>
+            </div>
+        </section>
+
+        <dialog id="preview-modal" class="preview-modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3 id="modal-title">Previsualización</h3>
+                    <button id="close-modal" class="close-btn">
+                        <X size={28} />
+                    </button>
+                </div>
+                <div id="modal-body" class="modal-body">
+                    <div class="loader" id="modal-loader">
+                        Cargando visor de Microsoft Office, por favor espera...
+                    </div>
+                    <div id="iframe-container" class="iframe-container"></div>
+                </div>
+            </div>
+        </dialog>
+    </main>
+</Layout>
+
+<style>
+    main {
+        width: 95%;
+        max-width: 1300px;
+        margin: 0 auto;
+        padding: 40px 20px;
+        font-family:
+            system-ui,
+            -apple-system,
+            sans-serif;
+    }
+
+    .header-gastos {
+        text-align: center;
+        margin-bottom: 40px;
+    }
+
+    .header-gastos h1 {
+        color: var(--ulpgc-blue, #0056b3);
+        font-size: 2.5rem;
+        margin-bottom: 10px;
+    }
+
+    .header-gastos p {
+        color: #666;
+        font-size: 1.1rem;
+    }
+
+    .upload-section {
+        display: flex;
+        justify-content: center;
+        margin-bottom: 50px;
+    }
+
+    .upload-card {
+        background: white;
+        width: 100%;
+        max-width: 600px;
+        padding: 30px;
+        border-radius: 16px;
+        border: 1px solid #e0e0e0;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.03);
+    }
+
+    .upload-card h3 {
+        color: var(--ulpgc-blue, #0056b3);
+        margin: 0 0 20px 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+    }
+
+    .form-group {
+        margin-bottom: 20px;
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+    }
+
+    .form-group label {
+        font-weight: 600;
+        color: #444;
+        font-size: 0.9rem;
+    }
+
+    .form-group input[type="text"],
+    .form-group input[type="file"] {
+        padding: 12px;
+        border: 1px solid #ccc;
+        border-radius: 8px;
+        font-size: 1rem;
+        transition: border-color 0.2s;
+    }
+
+    .form-group input[type="text"]:focus {
+        border-color: var(--ulpgc-orange-dark, #e65100);
+        outline: none;
+    }
+
+    .btn-submit {
+        width: 100%;
+        background-color: var(--ulpgc-blue, #0056b3);
+        color: white;
+        padding: 12px;
+        border: none;
+        border-radius: 8px;
+        font-size: 1.1rem;
+        font-weight: bold;
+        cursor: pointer;
+        transition:
+            background-color 0.2s,
+            transform 0.1s;
+    }
+
+    .btn-submit:hover {
+        background-color: #004494;
+        transform: translateY(-2px);
+    }
+
+    .documents-section h3 {
+        color: var(--ulpgc-orange-dark, #e65100);
+        margin-bottom: 25px;
+        font-size: 1.8rem;
+        border-left: 4px solid var(--ulpgc-orange-dark, #e65100);
+        padding-left: 10px;
+    }
+
+    .documents-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        gap: 25px;
+    }
+
+    .empty-state {
+        grid-column: 1 / -1;
+        text-align: center;
+        color: #888;
+        font-style: italic;
+        background: #f9f9f9;
+        padding: 40px;
+        border-radius: 12px;
+    }
+
+    :global(.doc-card) {
+        background: #f4f4f4;
+        border: 1px solid #eee;
+        border-left: 5px solid var(--ulpgc-blue);
+        border-radius: 10px;
+        padding: 20px 25px;
+        display: flex;
+        flex-direction: column;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.03);
+        transition:
+            transform 0.2s ease,
+            box-shadow 0.2s ease;
+    }
+
+    :global(.doc-card:hover) {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+    }
+
+    :global(.doc-title) {
+        font-weight: 700;
+        color: #444;
+        font-size: 1.05rem;
+        margin: 0 0 25px 0;
+        text-transform: uppercase;
+        text-align: left;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+    }
+
+    :global(.doc-icon) {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin-bottom: 25px;
+    }
+
+    :global(.doc-btn-preview),
+    :global(.doc-btn-download),
+    :global(.doc-btn-delete) {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
+        border: none;
+        cursor: pointer;
+        font-weight: 600;
+        color: white;
+    }
+
+    :global(.doc-btn-preview) {
+        background-color: var(--ulpgc-blue, #0056b3);
+        padding: 12px;
+        width: 100%;
+        margin-bottom: 20px;
+        border-radius: 25px;
+        transition: background 0.2s;
+    }
+    :global(.doc-btn-preview:hover) {
+        background-color: #004494;
+    }
+
+    :global(.doc-footer) {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-top: auto;
+        border-top: 1px solid #dddcdc;
+        padding-top: 15px;
+    }
+
+    :global(.doc-date) {
+        font-size: 0.8rem;
+        color: #a0a0a0;
+    }
+
+    :global(.doc-actions) {
+        display: flex;
+        gap: 8px;
+    }
+
+    :global(.doc-btn-download) {
+        background-color: var(--ulpgc-orange-dark, #e65100);
+        padding: 6px 14px;
+        font-size: 0.85rem;
+        border-radius: 12px;
+    }
+
+    :global(.doc-btn-download:hover) {
+        background-color: #cc4800;
+    }
+
+    :global(.doc-btn-delete) {
+        background-color: #888888;
+        padding: 6px 14px;
+        font-size: 0.85rem;
+        border-radius: 12px;
+    }
+
+    :global(.doc-btn-delete:hover) {
+        background-color: #666666;
+    }
+
+    .preview-modal {
+        width: 95%;
+        max-width: 1200px;
+        height: 85vh;
+        border: none;
+        border-radius: 16px;
+        box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
+        padding: 0;
+        margin: auto;
+        overflow: hidden;
+    }
+
+    .preview-modal::backdrop {
+        background: rgba(0, 0, 0, 0.6);
+        backdrop-filter: blur(3px);
+    }
+
+    .modal-content {
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+    }
+
+    .modal-header {
+        background: var(--ulpgc-blue, #0056b3);
+        color: white;
+        padding: 15px 20px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        z-index: 10;
+    }
+
+    .modal-header h3 {
+        margin: 0;
+        font-size: 1.2rem;
+    }
+
+    .close-btn {
+        background: none;
+        border: none;
+        color: white;
+        cursor: pointer;
+        line-height: 1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        opacity: 0.8;
+        transition: opacity 0.2s;
+    }
+
+    .close-btn:hover {
+        opacity: 1;
+    }
+
+    .modal-body {
+        flex-grow: 1;
+        background: #f8f9fa;
+        display: flex;
+        flex-direction: column;
+    }
+
+    #modal-loader {
+        text-align: center;
+        color: #666;
+        font-style: italic;
+        padding: 20px;
+    }
+
+    .iframe-container {
+        flex-grow: 1;
+        width: 100%;
+        height: 100%;
+        display: flex;
+    }
+
+    :global(.iframe-container iframe) {
+        width: 100%;
+        height: 100%;
+        border: none;
+        flex-grow: 1;
+    }
+</style>
+
+<script>
+    type DocumentFile = {
+        id: string;
+        title: string;
+        file: File;
+        date: string;
+    };
+
+    document.addEventListener("DOMContentLoaded", () => {
+        let filesData: DocumentFile[] = [];
+
+        const uploadForm = document.getElementById(
+            "upload-form",
+        ) as HTMLFormElement;
+        const titleInput = document.getElementById(
+            "file-title",
+        ) as HTMLInputElement;
+        const fileInput = document.getElementById(
+            "file-input",
+        ) as HTMLInputElement;
+        const grid = document.getElementById("documents-grid");
+        const emptyState = document.getElementById("empty-state");
+
+        const modal = document.getElementById(
+            "preview-modal",
+        ) as HTMLDialogElement;
+        const closeModalBtn = document.getElementById("close-modal");
+        const modalTitle = document.getElementById("modal-title");
+        const modalLoader = document.getElementById("modal-loader");
+        const iframeContainer = document.getElementById("iframe-container");
+
+        const tplExcel = document.getElementById(
+            "tpl-icon-excel",
+        ) as HTMLTemplateElement;
+        const tplEye = document.getElementById(
+            "tpl-icon-eye",
+        ) as HTMLTemplateElement;
+        const tplDownload = document.getElementById(
+            "tpl-icon-download",
+        ) as HTMLTemplateElement;
+        const tplTrash = document.getElementById(
+            "tpl-icon-trash",
+        ) as HTMLTemplateElement;
+
+        uploadForm?.addEventListener("submit", (e) => {
+            e.preventDefault();
+
+            if (!fileInput.files || fileInput.files.length === 0) return;
+            const file = fileInput.files[0];
+            const title = titleInput.value.trim() || file.name;
+
+            const newDoc = {
+                id: "doc_" + Date.now(),
+                title: title,
+                file: file,
+                date: new Date().toLocaleDateString("es-ES", {
+                    day: "numeric",
+                    month: "short",
+                    year: "numeric",
+                }),
+            };
+
+            filesData.push(newDoc);
+            uploadForm.reset();
+            renderGrid();
+        });
+
+        function renderGrid() {
+            if (!grid) return;
+            grid.innerHTML = "";
+
+            if (filesData.length === 0) {
+                if (emptyState) grid.appendChild(emptyState);
+                return;
+            }
+
+            filesData.forEach((doc) => {
+                const card = document.createElement("div");
+                card.className = "doc-card";
+
+                const titleEl = document.createElement("h4");
+                titleEl.className = "doc-title";
+                titleEl.textContent = doc.title;
+                titleEl.title = doc.title;
+
+                const iconEl = document.createElement("div");
+                iconEl.className = "doc-icon";
+                if (tplExcel)
+                    iconEl.appendChild(tplExcel.content.cloneNode(true));
+
+                const btnPreview = document.createElement("button");
+                btnPreview.className = "doc-btn-preview";
+                if (tplEye)
+                    btnPreview.appendChild(tplEye.content.cloneNode(true));
+                btnPreview.appendChild(
+                    document.createTextNode(" Previsualizar"),
+                );
+                btnPreview.onclick = () => openPreview(doc);
+
+                const footer = document.createElement("div");
+                footer.className = "doc-footer";
+
+                const dateEl = document.createElement("span");
+                dateEl.className = "doc-date";
+                dateEl.textContent = doc.date;
+
+                const actionsDiv = document.createElement("div");
+                actionsDiv.className = "doc-actions";
+
+                const btnDownload = document.createElement("button");
+                btnDownload.className = "doc-btn-download";
+                btnDownload.title = "Descargar";
+                if (tplDownload)
+                    btnDownload.appendChild(
+                        tplDownload.content.cloneNode(true),
+                    );
+                btnDownload.onclick = () => downloadFile(doc);
+
+                const btnDelete = document.createElement("button");
+                btnDelete.className = "doc-btn-delete";
+                btnDelete.title = "Borrar";
+                if (tplTrash)
+                    btnDelete.appendChild(tplTrash.content.cloneNode(true));
+                btnDelete.onclick = () => {
+                    filesData = filesData.filter((d) => d.id !== doc.id);
+                    renderGrid();
+                };
+
+                actionsDiv.appendChild(btnDownload);
+                actionsDiv.appendChild(btnDelete);
+                footer.appendChild(dateEl);
+                footer.appendChild(actionsDiv);
+
+                card.appendChild(titleEl);
+                card.appendChild(iconEl);
+                card.appendChild(btnPreview);
+                card.appendChild(footer);
+                grid.appendChild(card);
+            });
+        }
+
+        function openPreview(doc: DocumentFile) {
+            if (!modal || !modalTitle || !modalLoader || !iframeContainer)
+                return;
+
+            modalTitle.textContent = doc.title;
+            modalLoader.style.display = "block";
+            iframeContainer.innerHTML = "";
+            modal.showModal();
+
+            const excelPublico =
+                "https://raw.githubusercontent.com/deii-ulpgc-tecnologia/Prueba_Back_Excel/main/Libro2.xlsx";
+            const urlMicrosoft = `https://view.officeapps.live.com/op/embed.aspx?src=${encodeURIComponent(excelPublico)}`;
+
+            const iframe = document.createElement("iframe");
+            iframe.src = urlMicrosoft;
+            iframe.style.width = "100%";
+            iframe.style.height = "100%";
+            iframe.style.border = "none";
+
+            iframe.onload = () => {
+                modalLoader.style.display = "none";
+            };
+
+            iframeContainer.appendChild(iframe);
+        }
+
+        function downloadFile(doc: DocumentFile) {
+            const url = URL.createObjectURL(doc.file);
+            const a = document.createElement("a");
+            a.href = url;
+            a.download = doc.file.name;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+
+        closeModalBtn?.addEventListener("click", () => {
+            modal.close();
+            if (iframeContainer) iframeContainer.innerHTML = "";
+        });
+
+        modal?.addEventListener("click", (e) => {
+            const dialogDimensions = modal.getBoundingClientRect();
+            if (
+                e.clientX < dialogDimensions.left ||
+                e.clientX > dialogDimensions.right ||
+                e.clientY < dialogDimensions.top ||
+                e.clientY > dialogDimensions.bottom
+            ) {
+                modal.close();
+                if (iframeContainer) iframeContainer.innerHTML = "";
+            }
+        });
+    });
+</script>
