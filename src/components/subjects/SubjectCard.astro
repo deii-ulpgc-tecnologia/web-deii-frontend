@@ -3,6 +3,7 @@ import type { MarkdownSubject } from "@/types/Subject";
 import { DEGREES, SEMESTERS, TYPES, YEARS } from "@/constants/SubjectsConfig";
 import Tag from "@/components/base/Tag.astro";
 import CardDataHolder from "@/components/subjects/CardDataHolder.astro";
+import { Icon } from "astro-icon/components";
 
 export type Props = Omit<
     MarkdownSubject,
@@ -34,11 +35,20 @@ const typeLabel = TYPES.find((s) => s.id === type)?.label ?? "Desconocido";
 <a href={`/estudiantado/asignaturas/${slug}`}>
     <article style={`--bg: ${bg_color}`}>
         <div>
-            <Tag color={degree_color}>{degreeLabel}</Tag>
-            <h2>{name}</h2>
-            <p>{description}</p>
+            <Tag color={degree_color}>
+                <Icon name="lucide:graduation-cap" size={17} />
+                {degreeLabel}
+            </Tag>
+            <div>
+                <Tag color="pink">{yearLabel}</Tag>
+                <Tag color="lightblue">{semesterLabel}</Tag>
+            </div>
         </div>
         <div>
+            <div>
+                <h2>{name}</h2>
+                <p>{description}</p>
+            </div>
             <div>
                 <CardDataHolder
                     icon="lucide:id-card"
@@ -56,26 +66,14 @@ const typeLabel = TYPES.find((s) => s.id === type)?.label ?? "Desconocido";
                     value={typeLabel}
                 />
             </div>
-            <div>
-                <CardDataHolder
-                    icon="lucide:graduation-cap"
-                    title="Semestre"
-                    value={semesterLabel}
-                />
-                <CardDataHolder
-                    icon="lucide:calendar-clock"
-                    title="Curso"
-                    value={yearLabel}
-                />
-            </div>
         </div>
     </article>
 </a>
 
 <style>
     a {
-        width: min(90%, 550px);
-        aspect-ratio: 640/405;
+        width: min(90%, 648px);
+        aspect-ratio: 648/261;
         border-radius: 10px;
         overflow: hidden;
         border: 1px solid rgba(128, 128, 128, 0.147);
@@ -91,22 +89,36 @@ const typeLabel = TYPES.find((s) => s.id === type)?.label ?? "Desconocido";
 
     article {
         --bg: white;
-        display: grid;
-        grid-template-rows: 50% auto;
         height: 100%;
 
         & > div:first-child {
             grid-row: 1;
             background: var(--bg);
             position: relative;
-            padding: 10px 20px;
-            padding-top: 40px;
+            padding: 15px 20px;
+            display: flex;
+            flex-wrap: nowrap;
+            justify-content: space-between;
+            align-items: center;
 
-            & .tag {
-                position: absolute;
-                top: 5px;
-                left: 5px;
+            div {
+                display: flex;
+                flex-wrap: nowrap;
+                align-items: center;
+                justify-content: center;
+                gap: 10px;
             }
+        }
+
+        & > div:last-child {
+            grid-row: 2;
+            height: 100%;
+            width: 100%;
+            gap: 10px;
+            padding: 20px;
+            display: grid;
+            grid-template-columns: 60% auto;
+            justify-items: center;
 
             h2 {
                 color: oklch(from var(--bg) round(1.21 - L) 0 0);
@@ -115,7 +127,6 @@ const typeLabel = TYPES.find((s) => s.id === type)?.label ?? "Desconocido";
             }
 
             p {
-                max-width: 60%;
                 color: color-mix(
                     var(--bg) 20%,
                     oklch(from var(--bg) round(1.21 - L) 0 0)
@@ -125,24 +136,18 @@ const typeLabel = TYPES.find((s) => s.id === type)?.label ?? "Desconocido";
                 text-wrap: balance;
                 text-wrap: pretty;
             }
-        }
-
-        & > div:last-child {
-            grid-row: 2;
-            height: 100%;
-            width: 100%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            flex-direction: column;
-            gap: 20px;
-            padding: 20px;
 
             > div {
                 display: flex;
-                gap: 20px;
-                width: 100%;
+                gap: 10px;
+                height: 100%;
                 flex-wrap: nowrap;
+                flex-direction: column;
+                width: fit-content;
+
+                &:first-child {
+                    justify-self: start;
+                }
             }
         }
     }
