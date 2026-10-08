@@ -16,11 +16,14 @@ import Layout from "@/layouts/Layout.astro";
             </p>
             <a href="/">Regresar al Inicio</a>
         </article>
-        <img
-            src="/deii404.gif"
-            loading="eager"
-            alt="DEII404 haciendo una animación de que te has perdido"
-        />
+        <picture>
+            <source srcset="/deii404.webp" type="image/webp" />
+            <img
+                src="/deii404.gif"
+                loading="eager"
+                alt="DEII404 haciendo una animación de que te has perdido"
+            />
+        </picture>
     </div>
 </Layout>
 
