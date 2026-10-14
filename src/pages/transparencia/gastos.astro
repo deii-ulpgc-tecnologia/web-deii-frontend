@@ -1,28 +1,26 @@
 ---
-import Layout from "../../layouts/Layout.astro";
-import {
-    FileSpreadsheet,
-    FileUp,
-    X,
-    Download,
-    Trash2,
-    Eye,
-} from "@lucide/astro";
+import Layout from "@/layouts/Layout.astro";
+import { Icon } from "astro-icon/components";
 ---
 
 <Layout title="Gastos - Delegación de Estudiantes">
     <div style="display: none;">
         <template id="tpl-icon-excel">
-            <FileSpreadsheet size={64} stroke-width={1.2} color="#85b2e6" />
+            <Icon
+                name="lucide:file-spreadsheet"
+                size={64}
+                stroke-width={1.2}
+                color="#85b2e6"
+            />
         </template>
         <template id="tpl-icon-eye">
-            <Eye size={18} />
+            <Icon name="lucide:eye" size={18} />
         </template>
         <template id="tpl-icon-download">
-            <Download size={16} />
+            <Icon name="lucide:download" size={16} />
         </template>
         <template id="tpl-icon-trash">
-            <Trash2 size={16} />
+            <Icon name="lucide:trash" size={16} />
         </template>
     </div>
 
@@ -38,7 +36,8 @@ import {
         <section class="upload-section">
             <div class="upload-card">
                 <h3>
-                    <FileUp size={24} /> Subir Documento Excel
+                    <Icon name="lucide:file-up" size={24} /> Subir Documento
+                    Excel
                 </h3>
                 <form id="upload-form">
                     <div class="form-group">
@@ -83,7 +82,7 @@ import {
                 <div class="modal-header">
                     <h3 id="modal-title">Previsualización</h3>
                     <button id="close-modal" class="close-btn">
-                        <X size={28} />
+                        <Icon name="lucide:x" size={28} />
                     </button>
                 </div>
                 <div id="modal-body" class="modal-body">
