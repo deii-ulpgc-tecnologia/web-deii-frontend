@@ -1,0 +1,314 @@
+---
+import Layout from "../../../layouts/Layout.astro";
+import { PATHS } from "@/constants/Site";
+import { getNewsList, getEventsList } from "@/lib/comunicacion";
+
+export const prerender = false;
+
+interface RawSource {
+    id: string | number;
+    title?: string;
+    image?: string;
+    content?: string;
+    description?: string;
+    publishedAt?: Date | string;
+    date?: Date | string;
+    tags?: string[];
+    division?: string[];
+    location?: string;
+    newsId?: string | number;
+}
+
+interface DetailItem {
+    id: string;
+    title: string;
+    image: string;
+    content: string;
+    publishedAt?: Date;
+    tags?: string[];
+    division?: string[];
+    location?: string;
+}
+
+const { id } = Astro.params;
+
+const newsList = (await getNewsList()) as unknown as RawSource[];
+const eventsList = (await getEventsList()) as unknown as RawSource[];
+
+const eventItem = eventsList.find((e) => String(e.id) === id);
+const isEvent = Boolean(eventItem);
+
+const targetNewsId = eventItem?.newsId ? String(eventItem.newsId) : id;
+const newsItem = newsList.find((n) => String(n.id) === targetNewsId);
+
+const rawSource = newsItem ?? eventItem;
+
+if (!rawSource) {
+    return Astro.redirect(PATHS.NEWS);
+}
+
+const rawDate = rawSource.publishedAt ?? rawSource.date;
+const parsedDate = rawDate ? new Date(rawDate) : undefined;
+
+const item: DetailItem = {
+    id: String(rawSource.id),
+    title: rawSource.title ?? "",
+    image: rawSource.image ?? "",
+    content: rawSource.content ?? rawSource.description ?? "",
+    publishedAt:
+        parsedDate && !Number.isNaN(parsedDate.getTime())
+            ? parsedDate
+            : undefined,
+    tags: Array.isArray(rawSource.tags) ? rawSource.tags : undefined,
+    division: Array.isArray(rawSource.division)
+        ? rawSource.division
+        : undefined,
+    location: rawSource.location ? String(rawSource.location) : undefined,
+};
+
+const backUrl = isEvent
+    ? ((PATHS as Record<string, string>).EVENTS ?? "/comunicacion/eventos")
+    : PATHS.NEWS;
+const backLabel = isEvent ? "Volver a eventos" : "Volver a noticias";
+---
+
+<Layout title={`${item.title} - Delegación de Estudiantes`}>
+    <main>
+        <a href={backUrl} class="btn-volver">
+            &larr; {backLabel}
+        </a>
+
+        <article class="noticia-detalle">
+            <div class="banner-container">
+                <img src={item.image} alt={item.title} class="banner-img" />
+            </div>
+
+            <header class="noticia-header">
+                <div class="meta-top">
+                    {item.publishedAt && (
+                        <time datetime={item.publishedAt.toISOString()}>
+                            {item.publishedAt.toLocaleDateString("es-ES", {
+                                day: "numeric",
+                                month: "long",
+                                year: "numeric",
+                            })}
+                        </time>
+                    )}
+
+                    {item.location && (
+                        <span class="meta-location">📍 {item.location}</span>
+                    )}
+
+                    {item.division && item.division.length > 0 && (
+                        <div class="divisiones">
+                            {item.division.map((div) => (
+                                <span class="badge-division">{div}</span>
+                            ))}
+                        </div>
+                    )}
+                </div>
+
+                <h1>{item.title}</h1>
+
+                {item.tags && item.tags.length > 0 && (
+                    <div class="tags-list">
+                        {item.tags.map((tag) => (
+                            <a
+                                href={`${PATHS.NEWS}?tags=${encodeURIComponent(tag)}`}
+                                class="tag"
+                            >
+                                #{tag}
+                            </a>
+                        ))}
+                    </div>
+                )}
+            </header>
+
+            <div class="texto-noticia" set:html={item.content} />
+        </article>
+    </main>
+</Layout>
+
+<style>
+    main {
+        width: 95%;
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 30px 20px 60px;
+    }
+
+    .btn-volver {
+        display: inline-block;
+        margin-bottom: 20px;
+        color: var(--ulpgc-blue);
+        text-decoration: none;
+        font-weight: bold;
+        font-size: 28px;
+        margin-top: 10px;
+        transition: opacity 0.2s;
+    }
+
+    .btn-volver:hover {
+        opacity: 0.75;
+        text-decoration: underline;
+    }
+
+    .banner-container {
+        width: 100%;
+        height: 400px;
+        border-radius: 12px;
+        overflow: hidden;
+        margin-bottom: 30px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    }
+
+    .banner-img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
+    }
+
+    .noticia-header {
+        border-bottom: 1px solid #e0e0e0;
+        padding-bottom: 20px;
+        margin-bottom: 30px;
+    }
+
+    .meta-top {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 15px;
+        margin-bottom: 12px;
+        color: #666;
+        font-size: 14px;
+    }
+
+    .meta-location {
+        font-weight: 600;
+        color: #444;
+    }
+
+    .divisiones {
+        display: flex;
+        gap: 8px;
+    }
+
+    .badge-division {
+        background-color: var(--ulpgc-blue);
+        color: white;
+        padding: 3px 10px;
+        border-radius: 4px;
+        font-size: 12px;
+        font-weight: bold;
+        text-transform: capitalize;
+    }
+
+    h1 {
+        color: var(--ulpgc-orange-dark);
+        font-size: 2.2rem;
+        line-height: 1.2;
+        margin: 0 0 15px 0;
+    }
+
+    .tags-list {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+    }
+
+    .tag {
+        background: #f1f3f5;
+        color: #495057;
+        padding: 4px 10px;
+        border-radius: 20px;
+        font-size: 13px;
+        text-decoration: none;
+        transition: background 0.2s;
+    }
+
+    .tag:hover {
+        background: #e2e6ea;
+    }
+
+    .texto-noticia {
+        max-width: 850px;
+        margin: 0 auto;
+        font-size: 1.08rem;
+        line-height: 1.8;
+        color: #222;
+    }
+
+    .texto-noticia :global(p) {
+        margin: 0 0 1.25em 0;
+        text-wrap: pretty;
+    }
+
+    .texto-noticia :global(h2),
+    .texto-noticia :global(h3),
+    .texto-noticia :global(h4) {
+        color: var(--ulpgc-blue);
+        margin: 1.6em 0 0.6em 0;
+        line-height: 1.3;
+    }
+
+    .texto-noticia :global(ul),
+    .texto-noticia :global(ol) {
+        margin: 0 0 1.25em 1.5em;
+        padding: 0;
+    }
+
+    .texto-noticia :global(li) {
+        margin-bottom: 0.45em;
+    }
+
+    .texto-noticia :global(a) {
+        color: var(--ulpgc-blue);
+        text-decoration: underline;
+    }
+
+    .texto-noticia :global(blockquote) {
+        border-left: 4px solid var(--ulpgc-orange-dark);
+        margin: 1.5em 0;
+        padding: 12px 20px;
+        background: #f8f9fa;
+        color: #444;
+        border-radius: 0 6px 6px 0;
+    }
+
+    .texto-noticia :global(blockquote p:last-child) {
+        margin-bottom: 0;
+    }
+
+    .texto-noticia :global(figure) {
+        margin: 2em 0;
+        text-align: center;
+    }
+
+    .texto-noticia :global(img) {
+        max-width: 100%;
+        height: auto;
+        border-radius: 10px;
+        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+        display: block;
+        margin: 0 auto;
+    }
+
+    .texto-noticia :global(figcaption) {
+        margin-top: 8px;
+        font-size: 0.9rem;
+        color: #666;
+        font-style: italic;
+    }
+
+    @media (max-width: 900px) {
+        .banner-container {
+            height: 260px;
+        }
+
+        h1 {
+            font-size: 1.7rem;
+        }
+    }
+</style>

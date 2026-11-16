@@ -15,7 +15,7 @@ export const SITE = {
 
 export const PATHS = {
     /* COMUNICATION */
-    COMMUNICATION: "/comunicacion",
+    COMMUNICATION: "/comunicacion/gestion",
     NEWS: "/comunicacion/noticias",
     EVENTS: "/comunicacion/eventos",
 

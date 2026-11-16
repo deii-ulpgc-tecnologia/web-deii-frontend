@@ -4,6 +4,7 @@ export interface News {
     id: string;
     title: string;
     image: string;
+    images?: string[];
     content: string;
     publishedAt: Date;
     tags?: string[];

@@ -1,0 +1,997 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import { PATHS } from "@/constants/Site";
+import { getAllItems } from "@/lib/comunicacion";
+import { stripHtml } from "@/lib/markdown";
+
+export const prerender = false;
+
+const items = await getAllItems();
+const sortedItems = [...items].sort(
+    (a, b) =>
+        new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime(),
+);
+---
+
+<Layout title="Gestión de Noticias y Eventos - Delegación de Estudiantes">
+    <main>
+        <div class="header-admin">
+            <div>
+                <h1>Gestión de Comunicación</h1>
+                <p>
+                    Crea, edita o elimina noticias y eventos publicados en la
+                    web.
+                </p>
+            </div>
+            <button type="button" id="btn-nueva" class="btn-primary">
+                + Nueva publicación
+            </button>
+        </div>
+
+        <section id="panel-editor" class="editor-card hidden">
+            <div class="editor-header">
+                <h2 id="editor-titulo">Nueva publicación</h2>
+                <button type="button" id="btn-cerrar-editor" class="btn-close">
+                    &times;
+                </button>
+            </div>
+
+            <form id="form-publicacion">
+                <input type="hidden" id="item-id" name="id" />
+
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="item-type">Tipo de publicación *</label>
+                        <select id="item-type" name="type" required>
+                            <option value="news">Noticia</option>
+                            <option value="event">Evento</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="item-date">Fecha *</label>
+                        <input
+                            type="datetime-local"
+                            id="item-date"
+                            name="publishedAt"
+                            required
+                        />
+                    </div>
+
+                    <div class="form-group full-width">
+                        <label for="item-title">Título *</label>
+                        <input
+                            type="text"
+                            id="item-title"
+                            name="title"
+                            placeholder="Ej: Inauguración de nuevas salas de estudio"
+                            required
+                        />
+                    </div>
+
+                    <div class="form-group">
+                        <label for="item-division">División</label>
+                        <select id="item-division" name="division">
+                            <option value="">Sin división específica</option>
+                            <option value="infraestructura">
+                                Infraestructura
+                            </option>
+                            <option value="estudiantado">Estudiantado</option>
+                            <option value="transparencia">Transparencia</option>
+                            <option value="comunicacion">Comunicación</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="item-tags">
+                            Etiquetas (separadas por comas)
+                        </label>
+                        <input
+                            type="text"
+                            id="item-tags"
+                            name="tags"
+                            placeholder="Ej: accesibilidad, obras, campus"
+                        />
+                    </div>
+
+                    <div
+                        class="form-group full-width"
+                        id="grupo-ubicacion"
+                        style="display: none;"
+                    >
+                        <label for="item-location">
+                            Ubicación del evento (opcional)
+                        </label>
+                        <input
+                            type="text"
+                            id="item-location"
+                            name="location"
+                            placeholder="Ej: Salón de Actos, Edificio Central"
+                        />
+                    </div>
+
+                    <div class="form-group full-width">
+                        <label for="item-image">
+                            URL de la imagen principal (Banner superior) *
+                        </label>
+                        <input
+                            type="url"
+                            id="item-image"
+                            name="image"
+                            placeholder="https://..."
+                            required
+                        />
+                    </div>
+
+                    <div class="form-group full-width">
+                        <label for="item-content">Contenido (Markdown) *</label>
+                        <div class="md-editor-wrapper">
+                            <div class="md-toolbar">
+                                <div class="md-tools">
+                                    <button
+                                        type="button"
+                                        data-md="bold"
+                                        title="Negrita"
+                                    >
+                                        <strong>B</strong>
+                                    </button>
+                                    <button
+                                        type="button"
+                                        data-md="italic"
+                                        title="Cursiva"
+                                    >
+                                        <em>I</em>
+                                    </button>
+                                    <button
+                                        type="button"
+                                        data-md="h2"
+                                        title="Subtítulo"
+                                    >
+                                        H2
+                                    </button>
+                                    <button
+                                        type="button"
+                                        data-md="h3"
+                                        title="Sección"
+                                    >
+                                        H3
+                                    </button>
+                                    <button
+                                        type="button"
+                                        data-md="list"
+                                        title="Lista"
+                                    >
+                                        • Lista
+                                    </button>
+                                    <button
+                                        type="button"
+                                        data-md="quote"
+                                        title="Cita"
+                                    >
+                                        ❝ Cita
+                                    </button>
+                                    <button
+                                        type="button"
+                                        data-md="link"
+                                        title="Insertar enlace"
+                                    >
+                                        🔗 Enlace
+                                    </button>
+                                    <button
+                                        type="button"
+                                        data-md="image"
+                                        class="btn-insert-img"
+                                        title="Insertar imagen en el texto"
+                                    >
+                                        Insertar imagen
+                                    </button>
+                                </div>
+
+                                <div class="md-modes">
+                                    <button
+                                        type="button"
+                                        class="md-mode-btn active"
+                                        data-mode="write"
+                                    >
+                                        Escribir
+                                    </button>
+                                    <button
+                                        type="button"
+                                        class="md-mode-btn"
+                                        data-mode="preview"
+                                    >
+                                        Vista previa
+                                    </button>
+                                </div>
+                            </div>
+
+                            <textarea
+                                id="item-content"
+                                name="content"
+                                rows="12"
+                                placeholder="Escribe aquí usando Markdown. Puedes insertar imágenes donde quieras con el botón 'Insertar imagen' o escribiendo ![Pie de foto](https://...)"
+                                required
+                            ></textarea>
+
+                            <div
+                                id="md-preview-pane"
+                                class="md-preview hidden"
+                            ></div>
+                        </div>
+                        <small class="md-hint">
+                            Consejo: Usa <code>**negrita**</code>,{" "}
+                            <code>## Subtítulo</code>, listas con{" "}
+                            <code>- </code> e imágenes con{" "}
+                            <code>![Pie de foto](URL)</code>.
+                        </small>
+                    </div>
+                </div>
+
+                <div class="editor-actions">
+                    <button
+                        type="button"
+                        id="btn-cancelar"
+                        class="btn-secondary"
+                    >
+                        Cancelar
+                    </button>
+                    <button type="submit" id="btn-guardar" class="btn-primary">
+                        Guardar publicación
+                    </button>
+                </div>
+            </form>
+        </section>
+
+        <div class="toolbar">
+            <div class="tabs">
+                <button type="button" class="tab active" data-filter="all">
+                    Todas ({sortedItems.length})
+                </button>
+                <button type="button" class="tab" data-filter="news">
+                    Noticias (
+                    {sortedItems.filter((i) => i.type === "news").length})
+                </button>
+                <button type="button" class="tab" data-filter="event">
+                    Eventos (
+                    {sortedItems.filter((i) => i.type === "event").length})
+                </button>
+            </div>
+
+            <input
+                type="search"
+                id="buscador-admin"
+                placeholder="Buscar por título..."
+            />
+        </div>
+
+        <div class="lista-admin" id="lista-admin">
+            {sortedItems.map((item) => (
+                <article
+                    class="admin-row"
+                    data-type={item.type}
+                    data-title={item.title.toLowerCase()}
+                >
+                    <img src={item.image} alt={item.title} class="row-thumb" />
+
+                    <div class="row-info">
+                        <div class="row-badges">
+                            <span class={`badge-tipo ${item.type}`}>
+                                {item.type === "event" ? "Evento" : "Noticia"}
+                            </span>
+                            <time>
+                                {new Date(item.publishedAt).toLocaleDateString(
+                                    "es-ES",
+                                )}
+                            </time>
+                        </div>
+                        <h3>{item.title}</h3>
+                        <p>{stripHtml(item.content)}</p>
+                    </div>
+
+                    <div class="row-actions">
+                        <a
+                            href={`${PATHS.NEWS}/${item.id}`}
+                            target="_blank"
+                            class="btn-action ver"
+                            title="Ver página pública"
+                        >
+                            Ver
+                        </a>
+                        <button
+                            type="button"
+                            class="btn-action editar"
+                            data-item={JSON.stringify(item)}
+                        >
+                            Editar
+                        </button>
+                        <button
+                            type="button"
+                            class="btn-action borrar"
+                            data-id={item.id}
+                            data-title={item.title}
+                        >
+                            Borrar
+                        </button>
+                    </div>
+                </article>
+            ))}
+        </div>
+    </main>
+</Layout>
+
+<script>
+    import { markdownToHtml, htmlToMarkdown } from "@/lib/markdown";
+    import type { ManagedItem } from "@/lib/comunicacion";
+
+    const panelEditor = document.getElementById("panel-editor") as HTMLElement;
+    const form = document.getElementById("form-publicacion") as HTMLFormElement;
+    const editorTitulo = document.getElementById(
+        "editor-titulo",
+    ) as HTMLElement;
+    const inputId = document.getElementById("item-id") as HTMLInputElement;
+    const selectType = document.getElementById(
+        "item-type",
+    ) as HTMLSelectElement;
+    const inputDate = document.getElementById("item-date") as HTMLInputElement;
+    const inputTitle = document.getElementById(
+        "item-title",
+    ) as HTMLInputElement;
+    const selectDivision = document.getElementById(
+        "item-division",
+    ) as HTMLSelectElement;
+    const inputTags = document.getElementById("item-tags") as HTMLInputElement;
+    const inputLocation = document.getElementById(
+        "item-location",
+    ) as HTMLInputElement;
+    const grupoUbicacion = document.getElementById(
+        "grupo-ubicacion",
+    ) as HTMLElement;
+    const inputImage = document.getElementById(
+        "item-image",
+    ) as HTMLInputElement;
+    const inputContent = document.getElementById(
+        "item-content",
+    ) as HTMLTextAreaElement;
+    const previewPane = document.getElementById(
+        "md-preview-pane",
+    ) as HTMLElement;
+
+    function toggleUbicacion() {
+        grupoUbicacion.style.display =
+            selectType.value === "event" ? "flex" : "none";
+    }
+    selectType.addEventListener("change", toggleUbicacion);
+
+    function insertAtCursor(before: string, after = "", placeholder = "") {
+        const start = inputContent.selectionStart;
+        const end = inputContent.selectionEnd;
+        const selected =
+            inputContent.value.substring(start, end) || placeholder;
+        const replacement = `${before}${selected}${after}`;
+
+        inputContent.setRangeText(replacement, start, end, "select");
+        inputContent.focus();
+    }
+
+    document.querySelectorAll("[data-md]").forEach((btn) => {
+        btn.addEventListener("click", () => {
+            const action = (btn as HTMLElement).dataset.md;
+            switch (action) {
+                case "bold":
+                    insertAtCursor("**", "**", "texto en negrita");
+                    break;
+                case "italic":
+                    insertAtCursor("*", "*", "texto en cursiva");
+                    break;
+                case "h2":
+                    insertAtCursor("\n## ", "\n", "Subtítulo");
+                    break;
+                case "h3":
+                    insertAtCursor("\n### ", "\n", "Apartado");
+                    break;
+                case "list":
+                    insertAtCursor("\n- ", "", "Elemento de lista");
+                    break;
+                case "quote":
+                    insertAtCursor("\n> ", "\n", "Texto citado");
+                    break;
+                case "link": {
+                    const url = prompt(
+                        "Introduce la URL del enlace:",
+                        "https://",
+                    );
+                    if (url)
+                        insertAtCursor("[", `](${url})`, "texto del enlace");
+                    break;
+                }
+                case "image": {
+                    const imgUrl = prompt(
+                        "Introduce la URL de la imagen:",
+                        "https://",
+                    );
+                    if (imgUrl) {
+                        const caption =
+                            prompt(
+                                "Pie de foto o descripción (opcional):",
+                                "",
+                            ) || "";
+                        insertAtCursor(`\n\n![${caption}](${imgUrl})\n\n`);
+                    }
+                    break;
+                }
+            }
+        });
+    });
+
+    const modeBtns = document.querySelectorAll(".md-mode-btn");
+    function setEditorMode(mode: "write" | "preview") {
+        modeBtns.forEach((b) =>
+            b.classList.toggle(
+                "active",
+                (b as HTMLElement).dataset.mode === mode,
+            ),
+        );
+        if (mode === "preview") {
+            previewPane.innerHTML =
+                markdownToHtml(inputContent.value) ||
+                "<p><em>Nada que previsualizar...</em></p>";
+            inputContent.classList.add("hidden");
+            previewPane.classList.remove("hidden");
+        } else {
+            previewPane.classList.add("hidden");
+            inputContent.classList.remove("hidden");
+        }
+    }
+
+    modeBtns.forEach((btn) => {
+        btn.addEventListener("click", () => {
+            const mode = (btn as HTMLElement).dataset.mode as
+                "write" | "preview";
+            setEditorMode(mode);
+        });
+    });
+
+    function openEditor(item?: ManagedItem) {
+        form.reset();
+        setEditorMode("write");
+
+        if (item) {
+            editorTitulo.textContent = "Editar publicación";
+            inputId.value = item.id;
+            selectType.value = item.type || "news";
+            inputTitle.value = item.title || "";
+            inputImage.value = item.image || "";
+            inputContent.value = htmlToMarkdown(item.content || "");
+            inputLocation.value = item.location || "";
+            selectDivision.value = item.division?.[0] || "";
+            inputTags.value = Array.isArray(item.tags)
+                ? item.tags.join(", ")
+                : "";
+
+            if (item.publishedAt) {
+                const d = new Date(item.publishedAt);
+                d.setMinutes(d.getMinutes() - d.getTimezoneOffset());
+                inputDate.value = d.toISOString().slice(0, 16);
+            }
+        } else {
+            editorTitulo.textContent = "Nueva publicación";
+            inputId.value = "";
+            selectType.value = "news";
+            const now = new Date();
+            now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
+            inputDate.value = now.toISOString().slice(0, 16);
+        }
+
+        toggleUbicacion();
+        panelEditor.classList.remove("hidden");
+        panelEditor.scrollIntoView({ behavior: "smooth" });
+    }
+
+    function closeEditor() {
+        panelEditor.classList.add("hidden");
+    }
+
+    document
+        .getElementById("btn-nueva")
+        ?.addEventListener("click", () => openEditor());
+    document
+        .getElementById("btn-cerrar-editor")
+        ?.addEventListener("click", closeEditor);
+    document
+        .getElementById("btn-cancelar")
+        ?.addEventListener("click", closeEditor);
+
+    form.addEventListener("submit", async (e) => {
+        e.preventDefault();
+        const isEditing = Boolean(inputId.value);
+
+        const payload = {
+            id: inputId.value || undefined,
+            type: selectType.value,
+            title: inputTitle.value,
+            image: inputImage.value,
+            content: inputContent.value,
+            publishedAt: inputDate.value,
+            division: selectDivision.value ? [selectDivision.value] : [],
+            tags: inputTags.value
+                .split(",")
+                .map((t) => t.trim())
+                .filter(Boolean),
+            location:
+                selectType.value === "event" ? inputLocation.value : undefined,
+        };
+
+        const res = await fetch("/api/comunicacion", {
+            method: isEditing ? "PUT" : "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(payload),
+        });
+
+        if (res.ok) {
+            window.location.reload();
+        } else {
+            alert("Hubo un error al guardar la publicación.");
+        }
+    });
+
+    document.querySelectorAll(".btn-action.editar").forEach((btn) => {
+        btn.addEventListener("click", () => {
+            const raw = (btn as HTMLElement).dataset.item;
+            if (!raw) return;
+            const data = JSON.parse(raw) as ManagedItem;
+            openEditor(data);
+        });
+    });
+
+    document.querySelectorAll(".btn-action.borrar").forEach((btn) => {
+        btn.addEventListener("click", async () => {
+            const el = btn as HTMLElement;
+            const id = el.dataset.id;
+            const title = el.dataset.title;
+
+            if (
+                !confirm(
+                    `¿Seguro que quieres eliminar "${title}"? Esta acción no se puede deshacer.`,
+                )
+            ) {
+                return;
+            }
+
+            const res = await fetch("/api/comunicacion", {
+                method: "DELETE",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ id }),
+            });
+
+            if (res.ok) {
+                window.location.reload();
+            } else {
+                alert("No se pudo eliminar la publicación.");
+            }
+        });
+    });
+
+    let currentTab = "all";
+    const searchInput = document.getElementById(
+        "buscador-admin",
+    ) as HTMLInputElement;
+    const rows = Array.from(
+        document.querySelectorAll(".admin-row"),
+    ) as HTMLElement[];
+
+    function applyAdminFilters() {
+        const query = searchInput.value.toLowerCase().trim();
+        rows.forEach((row) => {
+            const matchTab =
+                currentTab === "all" || row.dataset.type === currentTab;
+            const matchSearch =
+                !query || (row.dataset.title || "").includes(query);
+            row.style.display = matchTab && matchSearch ? "grid" : "none";
+        });
+    }
+
+    document.querySelectorAll(".tab").forEach((tab) => {
+        tab.addEventListener("click", () => {
+            document
+                .querySelectorAll(".tab")
+                .forEach((t) => t.classList.remove("active"));
+            tab.classList.add("active");
+            currentTab = (tab as HTMLElement).dataset.filter || "all";
+            applyAdminFilters();
+        });
+    });
+
+    searchInput.addEventListener("input", applyAdminFilters);
+</script>
+
+<style>
+    main {
+        width: 95%;
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 40px 20px 60px;
+    }
+
+    .header-admin {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 20px;
+        margin-bottom: 30px;
+        flex-wrap: wrap;
+    }
+
+    .header-admin h1 {
+        color: var(--ulpgc-blue);
+        margin: 0 0 5px 0;
+    }
+
+    .header-admin p {
+        margin: 0;
+        color: #666;
+    }
+
+    .btn-primary {
+        background: var(--ulpgc-blue);
+        color: white;
+        border: none;
+        padding: 12px 20px;
+        border-radius: 6px;
+        font-weight: bold;
+        cursor: pointer;
+        font-size: 15px;
+    }
+
+    .btn-primary:hover {
+        opacity: 0.9;
+    }
+
+    .btn-secondary {
+        background: transparent;
+        color: #555;
+        border: 1px solid #ccc;
+        padding: 10px 18px;
+        border-radius: 6px;
+        cursor: pointer;
+        font-weight: bold;
+    }
+
+    .editor-card {
+        background: #f8f9fa;
+        border: 1px solid #d0d7de;
+        border-radius: 10px;
+        padding: 25px;
+        margin-bottom: 35px;
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.06);
+    }
+
+    .editor-card.hidden,
+    .hidden {
+        display: none !important;
+    }
+
+    .editor-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+        border-bottom: 1px solid #ddd;
+        padding-bottom: 12px;
+    }
+
+    .editor-header h2 {
+        margin: 0;
+        color: var(--ulpgc-orange-dark);
+        font-size: 1.4rem;
+    }
+
+    .btn-close {
+        background: none;
+        border: none;
+        font-size: 26px;
+        cursor: pointer;
+        color: #666;
+    }
+
+    .form-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 18px;
+    }
+
+    .form-group {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+    }
+
+    .form-group.full-width {
+        grid-column: span 2;
+    }
+
+    .form-group label {
+        font-weight: bold;
+        font-size: 14px;
+        color: var(--ulpgc-blue);
+    }
+
+    .form-group input,
+    .form-group select {
+        padding: 10px;
+        border: 1px solid #ccc;
+        border-radius: 6px;
+        font-family: inherit;
+        font-size: 14px;
+        background: white;
+    }
+
+    .md-editor-wrapper {
+        border: 1px solid #ccc;
+        border-radius: 6px;
+        overflow: hidden;
+        background: white;
+    }
+
+    .md-toolbar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 8px;
+        background: #eef1f4;
+        padding: 8px 12px;
+        border-bottom: 1px solid #d0d7de;
+    }
+
+    .md-tools,
+    .md-modes {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+    }
+
+    .md-tools button {
+        background: white;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        padding: 5px 10px;
+        font-size: 13px;
+        cursor: pointer;
+        color: #222;
+    }
+
+    .md-tools button:hover {
+        background: #f1f3f5;
+    }
+
+    .md-tools .btn-insert-img {
+        background: var(--ulpgc-orange-dark);
+        color: white;
+        border-color: var(--ulpgc-orange-dark);
+        font-weight: bold;
+    }
+
+    .md-tools .btn-insert-img:hover {
+        opacity: 0.9;
+        background: var(--ulpgc-orange-dark);
+    }
+
+    .md-mode-btn {
+        background: transparent;
+        border: 1px solid transparent;
+        padding: 5px 12px;
+        border-radius: 4px;
+        font-size: 13px;
+        font-weight: 600;
+        cursor: pointer;
+        color: #555;
+    }
+
+    .md-mode-btn.active {
+        background: white;
+        border-color: #ccc;
+        color: var(--ulpgc-blue);
+    }
+
+    .md-editor-wrapper textarea {
+        width: 100%;
+        border: none;
+        padding: 14px;
+        font-family:
+            ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+        font-size: 14px;
+        line-height: 1.6;
+        resize: vertical;
+        box-sizing: border-box;
+        outline: none;
+    }
+
+    .md-preview {
+        padding: 18px;
+        min-height: 240px;
+        line-height: 1.7;
+        color: #222;
+    }
+
+    .md-preview :global(img) {
+        max-width: 100%;
+        max-height: 360px;
+        border-radius: 8px;
+        display: block;
+        margin: 10px auto;
+    }
+
+    .md-preview :global(figure) {
+        margin: 20px 0;
+        text-align: center;
+    }
+
+    .md-preview :global(figcaption) {
+        font-size: 13px;
+        color: #666;
+        margin-top: 6px;
+    }
+
+    .md-hint {
+        color: #666;
+        font-size: 12px;
+    }
+
+    .editor-actions {
+        display: flex;
+        justify-content: flex-end;
+        gap: 12px;
+        margin-top: 20px;
+        padding-top: 15px;
+        border-top: 1px solid #ddd;
+    }
+
+    .toolbar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 15px;
+        margin-bottom: 20px;
+        flex-wrap: wrap;
+    }
+
+    .tabs {
+        display: flex;
+        gap: 8px;
+    }
+
+    .tab {
+        padding: 8px 16px;
+        border: 1px solid #ddd;
+        background: white;
+        border-radius: 6px;
+        cursor: pointer;
+        font-weight: 600;
+        color: #444;
+    }
+
+    .tab.active {
+        background: var(--ulpgc-blue);
+        color: white;
+        border-color: var(--ulpgc-blue);
+    }
+
+    #buscador-admin {
+        padding: 9px 14px;
+        border: 1px solid #ccc;
+        border-radius: 6px;
+        min-width: 260px;
+    }
+
+    .lista-admin {
+        display: flex;
+        flex-direction: column;
+        gap: 14px;
+    }
+
+    .admin-row {
+        display: grid;
+        grid-template-columns: 110px 1fr auto;
+        gap: 18px;
+        align-items: center;
+        background: white;
+        border: 1px solid #e5e7eb;
+        border-radius: 8px;
+        padding: 14px;
+    }
+
+    .row-thumb {
+        width: 110px;
+        height: 78px;
+        object-fit: cover;
+        border-radius: 6px;
+    }
+
+    .row-badges {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-size: 12px;
+        color: #666;
+        margin-bottom: 6px;
+    }
+
+    .badge-tipo {
+        padding: 2px 8px;
+        border-radius: 4px;
+        font-weight: bold;
+        color: white;
+    }
+
+    .badge-tipo.news {
+        background: var(--ulpgc-blue);
+    }
+
+    .badge-tipo.event {
+        background: var(--ulpgc-orange-dark);
+    }
+
+    .row-info h3 {
+        margin: 0 0 4px 0;
+        font-size: 1.05rem;
+        color: #111;
+    }
+
+    .row-info p {
+        margin: 0;
+        font-size: 13px;
+        color: #666;
+        display: -webkit-box;
+        -webkit-line-clamp: 1;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+    }
+
+    .row-actions {
+        display: flex;
+        gap: 8px;
+    }
+
+    .btn-action {
+        padding: 7px 12px;
+        border-radius: 5px;
+        font-size: 13px;
+        font-weight: bold;
+        cursor: pointer;
+        text-decoration: none;
+        border: 1px solid transparent;
+    }
+
+    .btn-action.ver {
+        background: #f1f3f5;
+        color: #333;
+    }
+
+    .btn-action.editar {
+        background: #e7f1ff;
+        color: var(--ulpgc-blue);
+        border-color: #b6d4fe;
+    }
+
+    .btn-action.borrar {
+        background: #fff5f5;
+        color: #c92a2a;
+        border-color: #ffc9c9;
+    }
+
+    @media (max-width: 768px) {
+        .form-grid {
+            grid-template-columns: 1fr;
+        }
+        .form-group.full-width {
+            grid-column: span 1;
+        }
+        .admin-row {
+            grid-template-columns: 1fr;
+        }
+        .row-thumb {
+            width: 100%;
+            height: 150px;
+        }
+    }
+</style>
