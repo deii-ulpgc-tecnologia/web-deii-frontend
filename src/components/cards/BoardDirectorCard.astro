@@ -1,0 +1,98 @@
+---
+import { Icon } from "astro-icon/components";
+
+export interface Props {
+    title: string;
+    name: string;
+    image: string;
+    "social-media": { icon: string; url: string }[];
+}
+
+const { title, name, image, "social-media": socialMedia } = Astro.props;
+---
+
+<article>
+    <div class="data">
+        <img src={image} alt={`Fotografía de ${name}`} />
+        <div>
+            <strong>{name}</strong>
+            <small>{title}</small>
+        </div>
+    </div>
+    <div class="social-media">
+        {socialMedia.map((item) => {
+            return (
+                <a href={item.url} target="_blank">
+                    <Icon name={item.icon} size={20} />
+                </a>
+            );
+        })}
+    </div>
+</article>
+
+<style>
+    article {
+        border: 1px solid #ccc;
+        border-radius: 15px;
+        width: 400px;
+        padding: 10px 20px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .data {
+        width: 90%;
+        border-bottom: solid 1px #ccc;
+        padding-top: 10px;
+        padding-bottom: 20px;
+        display: grid;
+        gap: 20px;
+        grid-template-columns: 100px auto;
+
+        & img {
+            border-radius: 100%;
+            height: 100px;
+            width: auto;
+            object-fit: cover;
+            object-position: top;
+            aspect-ratio: 1/1;
+        }
+
+        & > div {
+            display: flex;
+            flex-direction: column;
+            gap: 3px;
+
+            & strong {
+                margin-top: 10px;
+                font-size: large;
+                font-weight: bold;
+                color: var(--ulpgc-blue);
+            }
+
+            & small {
+                color: var(--ulpgc-gray);
+            }
+        }
+    }
+
+    .social-media {
+        margin-top: 10px;
+        width: 90%;
+        display: flex;
+        justify-content: start;
+        align-items: center;
+        gap: 10px;
+
+        a {
+            color: var(--ulpgc-gray);
+            transition: color 0.2s linear;
+
+            &:hover {
+                color: var(--ulpgc-orange);
+            }
+        }
+    }
+</style>

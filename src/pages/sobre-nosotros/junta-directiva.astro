@@ -1,0 +1,91 @@
+---
+import BoardDirectorCard from "@/components/cards/BoardDirectorCard.astro";
+import { BOARD_DIRECTORS } from "@/constants/BoardDirectors";
+import Layout from "@/layouts/Layout.astro";
+import { Icon } from "astro-icon/components";
+---
+
+<Layout
+    title="Junta Directiva"
+    description="La Junta Directiva es el órgano de gobierno de la DEII">
+    <main>
+        <h1>Junta Directiva</h1>
+        <div class="description">
+            <p>
+                De acuerdo con el Reglamento de Régimen Interno de la DEII, la
+                Junta Directiva es el órgano colegiado de gobierno, gestión
+                ejecutiva, coordinación operativa y seguimiento de proyectos de
+                la Delegación, integrado por el Equipo de Gobierno y los
+                Vocales.
+            </p>
+            <div>
+                <Icon name="lucide:user-group" size={50} />
+                <p>Queremos acercar la DEII a los estudiantes</p>
+            </div>
+        </div>
+        <div class="members">
+            {BOARD_DIRECTORS.map((data) => (
+                <BoardDirectorCard
+                    title={data.title}
+                    name={data.name}
+                    image={data.image}
+                    social-media={data.socialMedia}
+                />
+            ))}
+        </div>
+    </main>
+</Layout>
+
+<style>
+    main {
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 40px 20px;
+    }
+
+    .description {
+        display: grid;
+        gap: 50px;
+        grid-template-columns: 60% auto 25%;
+        align-items: start;
+        align-content: start;
+
+        p {
+            text-wrap-style: balance;
+            text-wrap-style: pretty;
+        }
+
+        div {
+            grid-column: 3;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            max-width: 100%;
+            background: var(--ulpgc-orange);
+            color: white;
+            font-size: large;
+            font-weight: bold;
+            gap: 20px;
+            border-radius: 15px;
+            padding: 10px 20px;
+
+            p {
+                width: 100%;
+            }
+        }
+    }
+
+    .members {
+        margin-top: 60px;
+        width: fit-content;
+        display: flex;
+        gap: 40px;
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+
+    h1 {
+        color: var(--ulpgc-blue);
+        margin-bottom: 20px;
+    }
+</style>
