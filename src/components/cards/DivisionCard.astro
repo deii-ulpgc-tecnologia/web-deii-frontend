@@ -1,0 +1,66 @@
+---
+import { Icon } from "astro-icon/components";
+
+export interface Props {
+    name: string;
+    vocal: string;
+    icon: string;
+    description: string;
+}
+
+const { name, vocal, icon, description } = Astro.props;
+---
+
+<article>
+    <Icon name={icon} size={60} />
+    <div>
+        <h2>{name}</h2>
+        <small>
+            <strong>Vocal:</strong> {vocal}
+        </small>
+        <p>{description}</p>
+    </div>
+</article>
+
+<style>
+    article {
+        display: grid;
+        grid-template-columns: 15% auto;
+        align-items: center;
+        min-width: 420px;
+        max-width: 420px;
+        flex: 1;
+
+        & > div {
+            padding: 0 10px;
+        }
+    }
+
+    [data-icon] {
+        height: 100%;
+        color: var(--ulpgc-blue);
+        padding-right: 10px;
+        border-right: 2px solid var(--ulpgc-blue);
+    }
+
+    h2 {
+        color: var(--ulpgc-blue);
+        font-weight: bold;
+        font-size: 1.1rem;
+        margin-bottom: -5px;
+    }
+
+    small {
+        font-size: 0.75rem;
+        color: var(--ulpgc-gray);
+
+        strong {
+            color: var(--ulpgc-orange);
+        }
+    }
+
+    p {
+        margin-top: 0.25rem;
+        font-size: 0.9rem;
+    }
+</style>

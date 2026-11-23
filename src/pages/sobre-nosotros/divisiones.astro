@@ -1,0 +1,60 @@
+---
+import DivisionCard from "@/components/cards/DivisionCard.astro";
+import { DIVISIONS } from "@/constants/Divisions";
+import Layout from "@/layouts/Layout.astro";
+---
+
+<Layout
+    title="Divisiones"
+    description="Echa un vistazo a las diviones que forman la DEII">
+    <main>
+        <h1>Divisiones</h1>
+        <p>
+            Estas son las distintas divisiones en las que están repartidos los
+            miembros de la Delegación de Estudiantes de la Escuela de Ingeniería
+            informática, cada una con sus objetivos, tareas y proyectos. Cada
+            miembro ha de pertenecer al menos a una de ellas para seguir
+            formando parte de la DEII.
+        </p>
+        <div>
+            {DIVISIONS.map((data) => (
+                <DivisionCard
+                    name={data.name}
+                    vocal={data.vocal}
+                    description={data.description}
+                    icon={data.icon}
+                />
+            ))}
+        </div>
+    </main>
+</Layout>
+
+<style>
+    main {
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 40px 20px;
+
+        & > p {
+            margin-bottom: 20px;
+        }
+
+        & > div {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 40px;
+            justify-content: center;
+            align-items: stretch;
+        }
+    }
+
+    h1 {
+        color: var(--ulpgc-blue);
+        margin-bottom: 10px;
+    }
+
+    p {
+        text-wrap-style: balance;
+        text-wrap-style: pretty;
+    }
+</style>
