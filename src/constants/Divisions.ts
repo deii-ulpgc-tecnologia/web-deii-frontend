@@ -1,7 +1,8 @@
 export const DIVISIONS = [
     {
         name: "División de Prensa y Comunicación",
-        description: "",
+        description:
+            "Gestiona la comunicación, difusión y promoción de actividades de la Delegación de Estudiantes.",
         icon: "lucide:newspaper",
         vocal: "Paula Xiaoqian Pizarro Rodriguez",
     },
@@ -38,7 +39,8 @@ export const DIVISIONS = [
     },
     {
         name: "División de Documentación y Normativa",
-        description: "",
+        description:
+            "Regulamos normativas internas y universitarias, revisamos guías y horarios, y asesoramos estudiantes.",
         icon: "lucide:file-pen",
         vocal: "Aday Álamo Duque",
     },
