@@ -27,7 +27,7 @@ export const DIVISIONS = [
     },
     {
         name: "División de Estudios",
-        description: "",
+        description: "Coordinamos el apoyo académico, los recursos de estudio y las iniciativas universitarias de la EII.",
         icon: "lucide:library-big",
         vocal: "Álvaro Pérez Cordero",
     },
